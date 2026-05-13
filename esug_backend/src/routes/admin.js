@@ -99,6 +99,9 @@ router.get('/challenges/:id', adminAuth, adminController.getChallenge);
 // PATCH /api/admin/challenges/:id
 router.patch('/challenges/:id', adminAuth, adminController.updateChallenge);
 
+// DELETE /api/admin/challenges/:id
+router.delete('/challenges/:id', adminAuth, adminController.deleteChallenge);
+
 // POST /api/admin/challenges/:id/image
 router.post('/challenges/:id/image', adminAuth, upload.single('image'), adminController.uploadImage);
 

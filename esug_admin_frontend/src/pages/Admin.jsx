@@ -641,6 +641,21 @@ function ChallengeRow({ challenge, adminSecret, onAction }) {
     }
   }
 
+  async function handleDelete() {
+    if (!confirm(`Delete "${challenge.title}"? This also removes all submissions. This cannot be undone.`)) return;
+    try {
+      await apiClient({
+        method: 'delete',
+        url: `/api/admin/challenges/${challenge.id}`,
+        headers: { 'x-admin-secret': adminSecret },
+      });
+      toast.success('Challenge deleted');
+      onAction();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
   async function handleManualScore() {
     if (!confirm('Manually score all submissions for this challenge now?')) return;
     try {
@@ -784,6 +799,10 @@ function ChallengeRow({ challenge, adminSecret, onAction }) {
                         Score Now
                       </button>
                     )}
+                    <button onClick={handleDelete} className="flex items-center gap-1.5 bg-duo-red text-white font-display font-bold text-sm px-3 py-2 rounded-xl hover:opacity-90 transition-opacity ml-auto">
+                      <Icon.Trash className="w-4 h-4" />
+                      Delete
+                    </button>
                   </div>
                 </div>
               )}

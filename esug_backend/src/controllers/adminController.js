@@ -222,6 +222,23 @@ async function updateChallenge(req, res) {
   }
 }
 
+async function deleteChallenge(req, res) {
+  try {
+    const { id } = req.params;
+
+    // Delete submissions first (FK constraint), then the challenge itself
+    await supabase.from('submissions').delete().eq('challenge_id', id);
+
+    const { error } = await supabase.from('challenges').delete().eq('id', id);
+    if (error) throw error;
+
+    return res.json({ success: true, message: 'Challenge deleted' });
+  } catch (err) {
+    console.error('[ADMIN] Delete challenge error:', err.message);
+    return res.status(500).json({ error: true, message: 'Failed to delete challenge', code: 500 });
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CHALLENGE IMAGE
 // ─────────────────────────────────────────────────────────────────────────────
@@ -532,7 +549,7 @@ async function getChallengeSubmissions(req, res) {
 }
 
 module.exports = {
-  createChallenge, listChallenges, getChallenge, updateChallenge,
+  createChallenge, listChallenges, getChallenge, updateChallenge, deleteChallenge,
   uploadImage, deleteImage,
   createQuestion, updateQuestion, deleteQuestion, uploadQuestionImage,
   manualScore, getStats, getChallengeSubmissions,
