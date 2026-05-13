@@ -129,14 +129,16 @@ export default function Profile() {
               <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-off border-2 border-surface-border">
                 <div>
                   <p className="font-display font-bold text-text-dark">Show real name on leaderboard</p>
-                  <p className="font-body text-xs text-text-mid">Currently: {form.show_real_name ? 'Visible' : 'Hidden'}</p>
+                  <p className="font-body text-xs text-text-mid">
+                    {form.show_real_name ? 'On — your real name is visible' : 'Off — only your display name is shown'}
+                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setForm((p) => ({ ...p, show_real_name: !p.show_real_name }))}
-                  className={`relative w-12 h-6 rounded-full transition-colors ${form.show_real_name ? 'bg-duo-blue' : 'bg-surface-border'}`}
+                  className={`relative flex-shrink-0 w-12 h-7 rounded-full transition-colors duration-200 ${form.show_real_name ? 'bg-duo-blue' : 'bg-gray-300'}`}
                 >
-                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.show_real_name ? 'translate-x-7' : 'translate-x-1'}`} />
+                  <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-200 ${form.show_real_name ? 'left-6' : 'left-1'}`} />
                 </button>
               </div>
 
