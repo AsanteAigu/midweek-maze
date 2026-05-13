@@ -92,7 +92,7 @@ export default function Register() {
                 <h2 className="font-display font-black text-xl text-text-dark">Your Details</h2>
 
                 <FormField label="Student ID" required>
-                  <input type="text" value={form.student_id} onChange={(e) => handleChange('student_id', e.target.value)} placeholder="e.g. ISAG/CE/100/001" className="input" required />
+                  <input type="text" value={form.student_id} onChange={(e) => handleChange('student_id', e.target.value)} placeholder="e.g. ESUG/CE/100/001" className="input" required />
                 </FormField>
 
                 <div className="grid grid-cols-2 gap-4">

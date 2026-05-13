@@ -66,7 +66,7 @@ export default function Landing() {
                 transition={{ delay: 0.15, duration: 0.4 }}
                 className="font-body text-text-mid text-lg mb-8"
               >
-                Weekly quizzes and puzzles for ISAG engineering students. Earn XP, climb the leaderboard, and prove you're the best in your cohort.
+                Weekly quizzes and puzzles for ESUG engineering students. Earn XP, climb the leaderboard, and prove you're the best in your cohort.
               </motion.p>
 
               <motion.div
@@ -201,7 +201,7 @@ export default function Landing() {
         <section className="bg-duo-blue py-12">
           <div className="max-w-5xl mx-auto px-4 text-center">
             <p className="font-display font-black text-white text-3xl mb-2">Ready to compete?</p>
-            <p className="font-body text-white/80 mb-6">Join ISAG engineering students on the platform.</p>
+            <p className="font-body text-white/80 mb-6">Join ESUG engineering students on the platform.</p>
             <Link
               to="/register"
               className="inline-flex items-center gap-2 bg-white text-duo-blue font-display font-black px-8 py-3 rounded-2xl shadow-[0_4px_0_#0F8FC0] hover:opacity-90 active:translate-y-1 transition-all"
