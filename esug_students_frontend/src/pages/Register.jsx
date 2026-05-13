@@ -159,8 +159,8 @@ export default function Register() {
                     <p className="font-body text-xs text-text-mid mt-0.5">Off = only your display name is public</p>
                   </div>
                   <button type="button" onClick={() => handleChange('show_real_name', !form.show_real_name)}
-                    className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${form.show_real_name ? 'bg-duo-blue' : 'bg-surface-border'}`}>
-                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ${form.show_real_name ? 'translate-x-7' : 'translate-x-1'}`} />
+                    className={`relative flex-shrink-0 w-12 h-7 rounded-full transition-colors duration-200 ${form.show_real_name ? 'bg-duo-blue' : 'bg-gray-300'}`}>
+                    <span className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-200 ${form.show_real_name ? 'left-6' : 'left-1'}`} />
                   </button>
                 </div>
 
