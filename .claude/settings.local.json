@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('dotenv'\\).config\\(\\); const s = require\\('./src/config/supabase'\\); s.from\\('students'\\).select\\('id',{count:'exact',head:true}\\).then\\(\\({count,error}\\)=>{ if\\(error\\) console.error\\('DB ERROR:',error.message\\); else console.log\\('DB OK — students table reachable, row count:', count\\); }\\).catch\\(e=>console.error\\('FATAL:',e.message\\)\\);\")",
+      "Bash(node -e ':*)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3001/health)",
+      "Bash(kill %1)",
+      "Bash(node_modules/.bin/vite build:*)"
+    ]
+  }
+}
