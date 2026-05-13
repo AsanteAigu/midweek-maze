@@ -232,28 +232,77 @@ const Icon = {
     </svg>
   ),
 
-  // Mascot character — engineering student for landing page
+  // Mascot — engineer holding a trophy cup
   OwlMascot: (p) => (
     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" {...p}>
-      <circle cx="60" cy="60" r="52" fill="#DFF4FF" />
-      <path d="M23 100 C31 78 45 67 60 67 C75 67 89 78 97 100" fill="#1CB0F6" />
-      <path d="M38 76 L82 76 L88 105 H32 L38 76 Z" fill="#0F8FC0" />
-      <path d="M43 78 L60 96 L77 78" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="60" cy="45" r="24" fill="#B97745" />
-      <path d="M36 43 C40 25 51 17 65 19 C78 21 86 30 86 45 C77 38 63 35 50 38 C45 39 40 41 36 43 Z" fill="#2F2F2F" />
-      <path d="M28 35 L60 20 L92 35 L60 50 L28 35 Z" fill="#1CB0F6" />
-      <path d="M39 40 V53 C50 61 70 61 81 53 V40 L60 50 L39 40 Z" fill="#0F8FC0" />
-      <path d="M91 36 V60" stroke="#FFC800" strokeWidth="4" strokeLinecap="round" />
-      <circle cx="91" cy="64" r="4" fill="#FFC800" />
-      <circle cx="51" cy="46" r="3" fill="#1A1A1A" />
-      <circle cx="69" cy="46" r="3" fill="#1A1A1A" />
-      <path d="M54 56 C58 60 63 60 67 56" stroke="#1A1A1A" strokeWidth="3" strokeLinecap="round" />
-      <path d="M21 82 L41 70" stroke="#1CB0F6" strokeWidth="8" strokeLinecap="round" />
-      <path d="M99 82 L79 70" stroke="#1CB0F6" strokeWidth="8" strokeLinecap="round" />
-      <path d="M21 85 L10 96 M18 84 L28 96" stroke="#FFC800" strokeWidth="4" strokeLinecap="round" />
-      <path d="M99 85 L110 96 M102 84 L92 96" stroke="#FFC800" strokeWidth="4" strokeLinecap="round" />
-      <path d="M45 88 H75" stroke="white" strokeWidth="4" strokeLinecap="round" />
-      <path d="M51 98 H69" stroke="white" strokeWidth="4" strokeLinecap="round" />
+      {/* Background circle */}
+      <circle cx="60" cy="62" r="54" fill="#DFF4FF" />
+
+      {/* Body — blue engineer shirt */}
+      <path d="M28 78 Q34 66 60 66 Q86 66 92 78 L95 112 H25 Z" fill="#1CB0F6" />
+
+      {/* Safety vest — orange stripes */}
+      <path d="M28 78 Q34 66 44 66 L40 112 H25 Z" fill="#FF9600" opacity="0.85" />
+      <path d="M76 66 Q86 66 92 78 L95 112 H80 Z" fill="#FF9600" opacity="0.85" />
+      <path d="M44 66 L40 112 H80 L76 66 Z" fill="none" />
+
+      {/* Reflective vest band across chest */}
+      <path d="M32 85 L88 85" stroke="#FFE066" strokeWidth="5" strokeLinecap="round" opacity="0.9" />
+      <path d="M33 93 L87 93" stroke="#FFE066" strokeWidth="5" strokeLinecap="round" opacity="0.9" />
+
+      {/* Left arm — hanging down */}
+      <line x1="32" y1="76" x2="15" y2="98" stroke="#F0A055" strokeWidth="11" strokeLinecap="round" />
+
+      {/* Right arm — raised, holding trophy */}
+      <line x1="88" y1="76" x2="103" y2="50" stroke="#F0A055" strokeWidth="11" strokeLinecap="round" />
+
+      {/* White collar V */}
+      <path d="M48 67 L60 80 L72 67" fill="white" />
+
+      {/* ── HARD HAT ── */}
+      {/* Dome */}
+      <path d="M32 34 Q34 10 60 8 Q86 10 88 34 Z" fill="#FFC800" />
+      {/* Dome sheen */}
+      <path d="M38 24 Q46 14 60 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" />
+      {/* Brim */}
+      <ellipse cx="60" cy="34" rx="31" ry="6.5" fill="#FFDA44" />
+      <ellipse cx="60" cy="34" rx="31" ry="6.5" fill="none" stroke="#E6A800" strokeWidth="1.5" />
+
+      {/* ── FACE ── */}
+      <circle cx="60" cy="47" r="22" fill="#F5A55A" />
+
+      {/* Eyes */}
+      <circle cx="51" cy="45" r="5.5" fill="white" />
+      <circle cx="69" cy="45" r="5.5" fill="white" />
+      <circle cx="51.5" cy="45.5" r="3.2" fill="#1A1A1A" />
+      <circle cx="69.5" cy="45.5" r="3.2" fill="#1A1A1A" />
+      <circle cx="52.5" cy="44" r="1.3" fill="white" />
+      <circle cx="70.5" cy="44" r="1.3" fill="white" />
+
+      {/* Smile */}
+      <path d="M51 56 Q60 64 69 56" stroke="#B05820" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+
+      {/* Cheeks */}
+      <ellipse cx="44" cy="53" rx="6" ry="4" fill="#FF8080" opacity="0.3" />
+      <ellipse cx="76" cy="53" rx="6" ry="4" fill="#FF8080" opacity="0.3" />
+
+      {/* ── TROPHY (in right hand) ── */}
+      {/* Cup body */}
+      <path d="M96 28 Q92 28 91 34 Q90 40 93 44 Q96 48 100 48 Q104 48 107 44 Q110 40 109 34 Q108 28 104 28 Z" fill="#FFD700" />
+      {/* Cup inner shadow */}
+      <path d="M97 30 Q95 34 96 40 Q97 44 100 46" stroke="#E6A800" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+      {/* Cup shine */}
+      <path d="M94 31 Q96 28 100 28" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+      {/* Handles */}
+      <path d="M91 33 Q87 36 88 41 Q89 44 91 43" stroke="#FFD700" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M109 33 Q113 36 112 41 Q111 44 109 43" stroke="#FFD700" strokeWidth="3" strokeLinecap="round" fill="none" />
+      {/* Stem */}
+      <rect x="98.5" y="48" width="3" height="7" rx="1" fill="#E6A800" />
+      {/* Base */}
+      <rect x="93" y="55" width="14" height="4" rx="2" fill="#FFD700" />
+      <rect x="95" y="59" width="10" height="2" rx="1" fill="#E6A800" />
+      {/* Star on cup */}
+      <path d="M100 33 L101.2 36.6 H105 L102 38.8 L103.1 42.4 L100 40.2 L96.9 42.4 L98 38.8 L95 36.6 H98.8 Z" fill="#E6A800" />
     </svg>
   ),
 
