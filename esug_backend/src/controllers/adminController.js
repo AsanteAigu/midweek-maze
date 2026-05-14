@@ -45,7 +45,7 @@ async function createChallenge(req, res) {
       title, description, challenge_type, week_number,
       opens_at, closes_at, xp_reward = 100, partial_xp = 50,
       answer_key, hint, answer_options = [],
-      question_type = 'text',
+      question_type = 'text', time_limit_seconds = null,
     } = req.body;
 
     const cleanOptions = Array.isArray(answer_options)
@@ -83,6 +83,7 @@ async function createChallenge(req, res) {
         answer_options: finalOptions,
         question_type,
         hint: hint || null,
+        time_limit_seconds: time_limit_seconds ? parseInt(time_limit_seconds) : null,
         is_active: false,
         is_scored: false,
         has_questions: false,
@@ -195,7 +196,7 @@ async function updateChallenge(req, res) {
     const allowedFields = [
       'title', 'description', 'challenge_type', 'week_number',
       'opens_at', 'closes_at', 'xp_reward', 'partial_xp',
-      'answer_key', 'answer_mode', 'answer_options', 'question_type', 'hint', 'is_active', 'has_questions',
+      'answer_key', 'answer_mode', 'answer_options', 'question_type', 'hint', 'is_active', 'has_questions', 'time_limit_seconds',
     ];
 
     const updates = {};

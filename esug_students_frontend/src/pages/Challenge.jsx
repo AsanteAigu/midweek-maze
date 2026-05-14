@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -251,6 +251,65 @@ function QuestionAnswerInput({ question, value, onChange }) {
 }
 
 
+// ── Countdown timer ────────────────────────────────────────────────────────────
+function useCountdown(challengeId, timeLimitSeconds, onExpire) {
+  const [secsLeft, setSecsLeft] = useState(null);
+  const expiredRef = useRef(false);
+
+  useEffect(() => {
+    if (!challengeId || !timeLimitSeconds) { setSecsLeft(null); return; }
+
+    const key = `timer_start_${challengeId}`;
+    let startTime = parseInt(localStorage.getItem(key) || '0', 10);
+    if (!startTime) {
+      startTime = Date.now();
+      localStorage.setItem(key, String(startTime));
+    }
+
+    function calcRemaining() {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      return Math.max(0, timeLimitSeconds - elapsed);
+    }
+
+    setSecsLeft(calcRemaining());
+
+    const interval = setInterval(() => {
+      const remaining = calcRemaining();
+      setSecsLeft(remaining);
+      if (remaining === 0 && !expiredRef.current) {
+        expiredRef.current = true;
+        clearInterval(interval);
+        onExpire();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [challengeId, timeLimitSeconds]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return secsLeft;
+}
+
+function CountdownTimer({ secsLeft }) {
+  if (secsLeft === null) return null;
+  const mins = Math.floor(secsLeft / 60);
+  const secs = secsLeft % 60;
+  const isUrgent = secsLeft <= 60;
+  const isExpired = secsLeft === 0;
+
+  return (
+    <div className={`flex items-center gap-1.5 font-mono font-bold text-sm px-3 py-1.5 rounded-full border-2 transition-colors ${
+      isExpired
+        ? 'bg-duo-red/20 border-duo-red text-duo-red'
+        : isUrgent
+        ? 'bg-duo-red/10 border-duo-red/50 text-duo-red animate-pulse'
+        : 'bg-surface-off border-surface-border text-text-dark'
+    }`}>
+      <Icon.Clock className="w-4 h-4 flex-shrink-0" />
+      {isExpired ? 'Time up!' : `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`}
+    </div>
+  );
+}
+
 // ── Format answer for display ──────────────────────────────────────────────────
 function formatAnswerLabel(answerStr, challenge) {
   if (!answerStr) return '—';
@@ -335,6 +394,8 @@ export default function Challenge() {
   const queryClient = useQueryClient();
   const [answer, setAnswer] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+  const autoSubmitRef = useRef(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['current-challenge'],
@@ -367,6 +428,26 @@ export default function Challenge() {
       setShowModal(false);
     },
   });
+
+  const handleTimerExpire = useCallback(() => {
+    if (autoSubmitRef.current || submission) return;
+    autoSubmitRef.current = true;
+    setTimedOut(true);
+    setShowModal(false);
+    const currentAnswer = answer.trim();
+    if (currentAnswer && challenge) {
+      toast('Time up! Submitting your answer...', { icon: '⏰' });
+      submitMutation.mutate({ challenge_id: challenge.id, answer: currentAnswer });
+    } else {
+      toast.error("Time's up — no answer was submitted");
+    }
+  }, [answer, challenge, submission]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const secsLeft = useCountdown(
+    challenge?.id,
+    !submission ? (challenge?.time_limit_seconds || null) : null,
+    handleTimerExpire,
+  );
 
   function getPreview() {
     if (!answer || !challenge) return '';
@@ -423,7 +504,7 @@ export default function Challenge() {
             {/* Header */}
             <motion.div {...pageTransition} className="card mb-6">
               <div className="flex items-start justify-between mb-4">
-                <div>
+                <div className="flex-1 min-w-0 mr-3">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <span className="flex items-center gap-1 bg-duo-red text-white font-display font-bold text-xs px-2 py-1 rounded-full">
                       <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
@@ -443,7 +524,10 @@ export default function Challenge() {
                   </div>
                   <h1 className="font-display font-black text-2xl text-text-dark">{challenge.title}</h1>
                 </div>
-                <XpBadge xp={challenge.xp_reward} size="md" />
+                <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                  <XpBadge xp={challenge.xp_reward} size="md" />
+                  {secsLeft !== null && <CountdownTimer secsLeft={secsLeft} />}
+                </div>
               </div>
               <p className="font-body text-text-mid text-sm flex items-center gap-1">
                 <Icon.Clock className="w-4 h-4" />
@@ -482,6 +566,12 @@ export default function Challenge() {
             <motion.div {...pageTransition}>
               {submission ? (
                 <SubmittedCard submission={submission} challenge={challenge} />
+              ) : timedOut && !submission ? (
+                <motion.div {...scaleIn} className="card text-center py-10 border-2 border-duo-red/30">
+                  <Icon.Clock className="w-14 h-14 text-duo-red mx-auto mb-3" />
+                  <h2 className="font-display font-black text-xl text-text-dark mb-2">Time's Up!</h2>
+                  <p className="font-body text-text-mid text-sm">Your time limit expired. {submitMutation.isPending ? 'Submitting your last answer...' : 'No answer was submitted.'}</p>
+                </motion.div>
               ) : (
                 // ── Single-question form (all 8 types) ─────────────────────
                 <form onSubmit={handleSubmitAttempt} className="card">
@@ -503,7 +593,7 @@ export default function Challenge() {
                     <Icon.Warning className="w-3.5 h-3.5" />
                     One submission only — cannot edit after submitting
                   </div>
-                  <button type="submit" className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2">
+                  <button type="submit" disabled={submitMutation.isPending} className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2 disabled:opacity-60">
                     <Icon.Rocket className="w-5 h-5" />
                     Submit Answer
                   </button>

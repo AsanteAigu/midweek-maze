@@ -75,6 +75,7 @@ const emptyChallengeForm = {
   closes_at: '',
   xp_reward: 100,
   partial_xp: 50,
+  time_limit_minutes: '',
   question_type: 'text',
   answer_options: ['', '', '', ''],
   answer_key: '',
@@ -112,6 +113,7 @@ function normalizeChallengeForm(challenge) {
     closes_at: formatDateForInput(challenge.closes_at),
     question_type: challenge.question_type || challenge.answer_mode || 'text',
     answer_options: options.length >= 2 ? options : [...options, '', ''].slice(0, 4),
+    time_limit_minutes: challenge.time_limit_seconds ? String(Math.round(challenge.time_limit_seconds / 60)) : '',
   };
 }
 
@@ -195,6 +197,7 @@ function ChallengeForm({ adminSecret, onSuccess, editChallenge = null }) {
         week_number: parseInt(form.week_number),
         xp_reward: parseInt(form.xp_reward),
         partial_xp: parseInt(form.partial_xp),
+        time_limit_seconds: form.time_limit_minutes ? parseInt(form.time_limit_minutes) * 60 : null,
         opens_at: toIsoDate(form.opens_at),
         closes_at: toIsoDate(form.closes_at),
         question_type: qt,
@@ -278,6 +281,21 @@ function ChallengeForm({ adminSecret, onSuccess, editChallenge = null }) {
         <div>
           <label className="block text-sm font-display font-bold text-text-dark mb-1.5">Partial XP</label>
           <input type="number" min="0" value={form.partial_xp} onChange={(e) => handleChange('partial_xp', e.target.value)} className="input" />
+        </div>
+
+        <div>
+          <label className="block text-sm font-display font-bold text-text-dark mb-1.5">
+            Time Limit <span className="font-normal text-text-muted">(minutes, optional)</span>
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="180"
+            value={form.time_limit_minutes}
+            onChange={(e) => handleChange('time_limit_minutes', e.target.value)}
+            placeholder="e.g. 10 — leave blank for no limit"
+            className="input"
+          />
         </div>
 
         <div className="sm:col-span-2">

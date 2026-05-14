@@ -42,6 +42,7 @@ function safeChallenge(challenge, questions = []) {
     image_url: challenge.image_url || null,
     has_questions: challenge.has_questions || false,
     questions: questions.map(safeQuestion),
+    time_limit_seconds: challenge.time_limit_seconds || null,
     created_at: challenge.created_at,
   };
 }
