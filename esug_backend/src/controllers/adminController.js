@@ -67,27 +67,29 @@ async function createChallenge(req, res) {
       ? ['True', 'False']
       : cleanOptions;
 
+    const insertPayload = {
+      title,
+      description,
+      challenge_type,
+      week_number: parseInt(week_number),
+      opens_at,
+      closes_at,
+      xp_reward: parseInt(xp_reward),
+      partial_xp: parseInt(partial_xp),
+      answer_key: finalAnswerKey,
+      answer_mode,
+      answer_options: finalOptions,
+      question_type,
+      hint: hint || null,
+      is_active: false,
+      is_scored: false,
+      has_questions: false,
+    };
+    if (time_limit_seconds) insertPayload.time_limit_seconds = parseInt(time_limit_seconds);
+
     let { data, error } = await supabase
       .from('challenges')
-      .insert({
-        title,
-        description,
-        challenge_type,
-        week_number: parseInt(week_number),
-        opens_at,
-        closes_at,
-        xp_reward: parseInt(xp_reward),
-        partial_xp: parseInt(partial_xp),
-        answer_key: finalAnswerKey,
-        answer_mode,
-        answer_options: finalOptions,
-        question_type,
-        hint: hint || null,
-        time_limit_seconds: time_limit_seconds ? parseInt(time_limit_seconds) : null,
-        is_active: false,
-        is_scored: false,
-        has_questions: false,
-      })
+      .insert(insertPayload)
       .select('id, title, challenge_type, question_type, answer_mode, answer_options, week_number, opens_at, closes_at, xp_reward, is_active, is_scored, has_questions, created_at')
       .single();
 
@@ -202,6 +204,8 @@ async function updateChallenge(req, res) {
     const updates = {};
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
+        // Skip time_limit_seconds if null/falsy — avoids error if column not yet migrated
+        if (field === 'time_limit_seconds' && !req.body[field]) continue;
         updates[field] = field === 'answer_options' && Array.isArray(req.body[field])
           ? req.body[field].map((option) => String(option).trim()).filter(Boolean)
           : req.body[field];
