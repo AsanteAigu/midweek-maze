@@ -52,20 +52,20 @@ export default function Dashboard() {
   return (
     <PageWrapper>
       {/* Greeting */}
-      <motion.div {...pageTransition} className="mb-8">
-        <div className="flex items-center gap-4">
-          <motion.div animate={characterFloat.animate}>
+      <motion.div {...pageTransition} className="mb-6">
+        <div className="flex items-center gap-3">
+          <motion.div animate={characterFloat.animate} className="flex-shrink-0">
             <img
               src={getAvatarUrl(student?.avatar_seed, 'adventurer', 80)}
               alt={student?.display_name}
-              className="w-16 h-16 rounded-2xl border-2 border-surface-border bg-white shadow-card"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-2 border-surface-border bg-white shadow-card"
             />
           </motion.div>
-          <div>
-            <h1 className="font-display font-black text-2xl text-text-dark">
+          <div className="min-w-0">
+            <h1 className="font-display font-black text-xl sm:text-2xl text-text-dark truncate">
               Welcome back, {student?.display_name}
             </h1>
-            <p className="font-body text-text-mid text-sm">
+            <p className="font-body text-text-mid text-xs sm:text-sm truncate">
               {COURSE_LABELS[student?.course]} · Level {student?.level}
             </p>
           </div>
@@ -76,18 +76,24 @@ export default function Dashboard() {
         {/* Left — main content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Stats row */}
-          <motion.div variants={staggerContainer} initial="initial" animate="animate" className="grid grid-cols-3 gap-4">
-            {[
-              { label: 'Total XP', value: student?.total_xp || 0, icon: <Icon.Star className="w-6 h-6 text-duo-yellow fill-duo-yellow" /> },
-              { label: 'Course', value: COURSE_LABELS[student?.course]?.split(' ')[0] || '—', icon: <Icon.AcademicCap className="w-6 h-6 text-duo-blue" /> },
-              { label: 'Level', value: student?.level || '—', icon: <Icon.ChartBar className="w-6 h-6 text-duo-purple" /> },
-            ].map((stat) => (
-              <motion.div key={stat.label} variants={staggerItem} className="card text-center">
-                <div className="flex justify-center mb-1">{stat.icon}</div>
-                <p className="font-mono font-black text-xl text-text-dark">{stat.value}</p>
-                <p className="font-body text-xs text-text-muted">{stat.label}</p>
-              </motion.div>
-            ))}
+          <motion.div variants={staggerContainer} initial="initial" animate="animate" className="grid grid-cols-3 gap-3">
+            <motion.div variants={staggerItem} className="card text-center px-2 py-4">
+              <div className="flex justify-center mb-1.5"><Icon.Star className="w-6 h-6 text-duo-yellow fill-duo-yellow" /></div>
+              <p className="font-mono font-black text-lg sm:text-2xl text-text-dark">{student?.total_xp || 0}</p>
+              <p className="font-body text-xs text-text-muted mt-0.5">Total XP</p>
+            </motion.div>
+            <motion.div variants={staggerItem} className="card text-center px-2 py-4">
+              <div className="flex justify-center mb-1.5"><Icon.AcademicCap className="w-6 h-6 text-duo-blue" /></div>
+              <p className="font-display font-black text-sm sm:text-base text-text-dark leading-tight line-clamp-2">
+                {COURSE_LABELS[student?.course] || '—'}
+              </p>
+              <p className="font-body text-xs text-text-muted mt-0.5">Course</p>
+            </motion.div>
+            <motion.div variants={staggerItem} className="card text-center px-2 py-4">
+              <div className="flex justify-center mb-1.5"><Icon.ChartBar className="w-6 h-6 text-duo-purple" /></div>
+              <p className="font-mono font-black text-lg sm:text-2xl text-text-dark">{student?.level || '—'}</p>
+              <p className="font-body text-xs text-text-muted mt-0.5">Level</p>
+            </motion.div>
           </motion.div>
 
           {/* Challenge Card */}
@@ -96,8 +102,8 @@ export default function Dashboard() {
               <CardSkeleton />
             ) : challenge ? (
               <div className={`card border-2 ${submission ? 'border-duo-blue/40 bg-blue-50' : 'border-duo-blue/30'}`}>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
+                <div className="flex items-start justify-between mb-4 gap-3">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="flex items-center gap-1 bg-duo-red text-white font-display font-bold text-xs px-2 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
@@ -105,9 +111,9 @@ export default function Dashboard() {
                       </span>
                       <span className="font-mono text-xs text-text-muted">Week {challenge.week_number}</span>
                     </div>
-                    <h2 className="font-display font-black text-xl text-text-dark">{challenge.title}</h2>
+                    <h2 className="font-display font-black text-lg sm:text-xl text-text-dark leading-snug">{challenge.title}</h2>
                   </div>
-                  {typeIcon[challenge.challenge_type]}
+                  <div className="flex-shrink-0">{typeIcon[challenge.challenge_type]}</div>
                 </div>
 
                 <div className="flex items-center gap-3 mb-4 flex-wrap">
