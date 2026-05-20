@@ -47,6 +47,104 @@ function safeChallenge(challenge, questions = []) {
   };
 }
 
+// GET /api/challenge/active — all currently live challenges + submission map
+async function getActiveChallenges(req, res) {
+  try {
+    const now = new Date().toISOString();
+
+    const { data: challenges, error } = await supabase
+      .from('challenges')
+      .select('*')
+      .eq('is_active', true)
+      .lte('opens_at', now)
+      .gt('closes_at', now)
+      .order('opens_at', { ascending: true });
+
+    if (error) throw error;
+
+    if (!challenges || challenges.length === 0) {
+      return res.json({
+        success: true,
+        challenges: [],
+        message: 'No active challenges — next challenge drops Wednesday at midnight',
+      });
+    }
+
+    const challengeIds = challenges.map((c) => c.id);
+    const { data: submissions } = await supabase
+      .from('submissions')
+      .select('id, challenge_id, answer, submitted_at, is_correct, xp_earned')
+      .eq('student_id', req.userId)
+      .in('challenge_id', challengeIds);
+
+    const submissionsMap = {};
+    (submissions || []).forEach((s) => { submissionsMap[s.challenge_id] = s; });
+
+    return res.json({
+      success: true,
+      challenges: challenges.map((c) => safeChallenge(c)),
+      submissions: submissionsMap,
+    });
+  } catch (err) {
+    console.error('[CHALLENGE] Get active error:', err.message);
+    return res.status(500).json({
+      error: true,
+      message: process.env.NODE_ENV === 'production' ? 'Failed to load challenges' : err.message,
+      code: 500,
+    });
+  }
+}
+
+// GET /api/challenge/:id — single challenge by ID
+async function getChallengeById(req, res) {
+  try {
+    const { id } = req.params;
+
+    const { data: challenge, error } = await supabase
+      .from('challenges')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    if (!challenge) {
+      return res.status(404).json({ error: true, message: 'Challenge not found', code: 404 });
+    }
+
+    let questions = [];
+    if (challenge.has_questions) {
+      try {
+        const { data: qData } = await supabase
+          .from('challenge_questions')
+          .select('id, challenge_id, difficulty, question_type, question_text, image_url, options, xp_value, sort_order')
+          .eq('challenge_id', challenge.id)
+          .order('sort_order', { ascending: true });
+        questions = qData || [];
+      } catch (_) {}
+    }
+
+    const { data: submission } = await supabase
+      .from('submissions')
+      .select('id, answer, submitted_at, is_correct, xp_earned')
+      .eq('student_id', req.userId)
+      .eq('challenge_id', challenge.id)
+      .single();
+
+    return res.json({
+      success: true,
+      challenge: safeChallenge(challenge, questions),
+      submission: submission || null,
+    });
+  } catch (err) {
+    console.error('[CHALLENGE] Get by ID error:', err.message);
+    return res.status(500).json({
+      error: true,
+      message: process.env.NODE_ENV === 'production' ? 'Failed to load challenge' : err.message,
+      code: 500,
+    });
+  }
+}
+
 async function getCurrentChallenge(req, res) {
   try {
     const now = new Date().toISOString();
@@ -133,4 +231,4 @@ async function getAllChallenges(req, res) {
   }
 }
 
-module.exports = { getCurrentChallenge, getAllChallenges };
+module.exports = { getActiveChallenges, getChallengeById, getCurrentChallenge, getAllChallenges };

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -392,14 +393,19 @@ function SubmittedCard({ submission, challenge }) {
 // ── Main page ──────────────────────────────────────────────────────────────────
 export default function Challenge() {
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const challengeId = searchParams.get('id');
   const [answer, setAnswer] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const autoSubmitRef = useRef(false);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['current-challenge'],
-    queryFn: () => apiClient.get('/api/challenge/current').then((r) => r.data),
+    queryKey: ['challenge', challengeId || 'current'],
+    queryFn: () => {
+      const endpoint = challengeId ? `/api/challenge/${challengeId}` : '/api/challenge/current';
+      return apiClient.get(endpoint).then((r) => r.data);
+    },
     staleTime: 30_000,
     retry: 1,
   });

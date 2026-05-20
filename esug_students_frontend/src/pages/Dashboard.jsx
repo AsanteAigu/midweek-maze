@@ -28,8 +28,8 @@ export default function Dashboard() {
   const { student } = useAuth();
 
   const { data: challengeData, isLoading: challengeLoading } = useQuery({
-    queryKey: ['current-challenge'],
-    queryFn: () => apiClient.get('/api/challenge/current').then((r) => r.data),
+    queryKey: ['active-challenges'],
+    queryFn: () => apiClient.get('/api/challenge/active').then((r) => r.data),
     staleTime: 30_000,
   });
 
@@ -39,8 +39,8 @@ export default function Dashboard() {
     staleTime: 60_000,
   });
 
-  const challenge = challengeData?.challenge;
-  const submission = challengeData?.submission;
+  const challenges = challengeData?.challenges || [];
+  const submissions = challengeData?.submissions || {};
   const topStudents = leaderboardData?.leaderboard || [];
 
   const typeIcon = {
@@ -96,46 +96,51 @@ export default function Dashboard() {
             </motion.div>
           </motion.div>
 
-          {/* Challenge Card */}
-          <motion.div {...pageTransition}>
+          {/* Challenge Cards */}
+          <motion.div {...pageTransition} className="space-y-4">
             {challengeLoading ? (
               <CardSkeleton />
-            ) : challenge ? (
-              <div className={`card border-2 ${submission ? 'border-duo-blue/40 bg-blue-50' : 'border-duo-blue/30'}`}>
-                <div className="flex items-start justify-between mb-4 gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="flex items-center gap-1 bg-duo-red text-white font-display font-bold text-xs px-2 py-0.5 rounded-full">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                        LIVE
-                      </span>
-                      <span className="font-mono text-xs text-text-muted">Week {challenge.week_number}</span>
+            ) : challenges.length > 0 ? (
+              challenges.map((challenge) => {
+                const submission = submissions[challenge.id] || null;
+                return (
+                  <div key={challenge.id} className={`card border-2 ${submission ? 'border-duo-blue/40 bg-blue-50' : 'border-duo-blue/30'}`}>
+                    <div className="flex items-start justify-between mb-4 gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="flex items-center gap-1 bg-duo-red text-white font-display font-bold text-xs px-2 py-0.5 rounded-full">
+                            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                            LIVE
+                          </span>
+                          <span className="font-mono text-xs text-text-muted">Week {challenge.week_number}</span>
+                        </div>
+                        <h2 className="font-display font-black text-lg sm:text-xl text-text-dark leading-snug">{challenge.title}</h2>
+                      </div>
+                      <div className="flex-shrink-0">{typeIcon[challenge.challenge_type]}</div>
                     </div>
-                    <h2 className="font-display font-black text-lg sm:text-xl text-text-dark leading-snug">{challenge.title}</h2>
-                  </div>
-                  <div className="flex-shrink-0">{typeIcon[challenge.challenge_type]}</div>
-                </div>
 
-                <div className="flex items-center gap-3 mb-4 flex-wrap">
-                  <XpBadge xp={challenge.xp_reward} size="md" />
-                  <CountdownTimer closesAt={challenge.closes_at} />
-                </div>
-
-                {submission ? (
-                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-duo-blue/10 border border-duo-blue/20">
-                    <Icon.Check className="w-6 h-6 text-duo-blue flex-shrink-0" />
-                    <div>
-                      <p className="font-display font-bold text-duo-blue">Answer submitted</p>
-                      <p className="font-body text-xs text-text-mid">Results update Wednesday at midnight</p>
+                    <div className="flex items-center gap-3 mb-4 flex-wrap">
+                      <XpBadge xp={challenge.xp_reward} size="md" />
+                      <CountdownTimer closesAt={challenge.closes_at} />
                     </div>
+
+                    {submission ? (
+                      <div className="flex items-center gap-3 p-3 rounded-2xl bg-duo-blue/10 border border-duo-blue/20">
+                        <Icon.Check className="w-6 h-6 text-duo-blue flex-shrink-0" />
+                        <div>
+                          <p className="font-display font-bold text-duo-blue">Answer submitted</p>
+                          <p className="font-body text-xs text-text-mid">Results update Wednesday at midnight</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <Link to={`/challenge?id=${challenge.id}`} className="btn-primary flex items-center justify-center gap-2 py-3">
+                        <Icon.Lightning className="w-5 h-5" />
+                        Go to Challenge
+                      </Link>
+                    )}
                   </div>
-                ) : (
-                  <Link to="/challenge" className="btn-primary flex items-center justify-center gap-2 py-3">
-                    <Icon.Lightning className="w-5 h-5" />
-                    Go to Challenge
-                  </Link>
-                )}
-              </div>
+                );
+              })
             ) : (
               <div className="card text-center py-10">
                 <Icon.Clock className="w-12 h-12 text-text-muted mx-auto mb-3" />
