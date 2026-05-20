@@ -11,6 +11,7 @@ import XpBadge from '../components/XpBadge';
 import Icon from '../components/Icons';
 import { useAuth } from '../context/AuthContext';
 import { getAvatarUrl, COURSE_LABELS } from '../utils/avatar';
+import { supabase } from '../utils/supabaseClient';
 import apiClient from '../utils/axiosClient';
 
 export default function Profile() {
@@ -49,12 +50,23 @@ export default function Profile() {
   });
 
   const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
-  const resetPasswordMutation = useMutation({
-    mutationFn: () => apiClient.post('/api/auth/reset-password'),
-    onSuccess: () => { setResetSent(true); toast.success('Reset link sent — check your email'); },
-    onError: (err) => toast.error(err.message || 'Failed to send reset email'),
-  });
+  async function handlePasswordReset() {
+    if (!student?.email) { toast.error('No email found on your account'); return; }
+    setResetLoading(true);
+    try {
+      const redirectTo = `${window.location.origin}/update-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(student.email, { redirectTo });
+      if (error) throw error;
+      setResetSent(true);
+      toast.success('Reset link sent — check your inbox');
+    } catch (err) {
+      toast.error(err.message || 'Failed to send reset email');
+    } finally {
+      setResetLoading(false);
+    }
+  }
 
   const deleteMutation = useMutation({
     mutationFn: () => apiClient.delete('/api/profile'),
@@ -311,12 +323,12 @@ export default function Profile() {
             </div>
           ) : (
             <button
-              onClick={() => resetPasswordMutation.mutate()}
-              disabled={resetPasswordMutation.isPending}
+              onClick={handlePasswordReset}
+              disabled={resetLoading}
               className="btn-secondary flex items-center gap-2 px-4 py-2.5 disabled:opacity-60"
             >
               <Icon.Key className="w-4 h-4" />
-              {resetPasswordMutation.isPending ? 'Sending...' : 'Send Reset Email'}
+              {resetLoading ? 'Sending...' : 'Send Reset Email'}
             </button>
           )}
         </div>
