@@ -53,4 +53,7 @@ router.get('/me', authMiddleware, authController.getMe);
 // POST /api/auth/logout
 router.post('/logout', authMiddleware, authController.logout);
 
+// POST /api/auth/reset-password — send reset email to registered address (auth required)
+router.post('/reset-password', authMiddleware, authController.sendPasswordReset);
+
 module.exports = router;

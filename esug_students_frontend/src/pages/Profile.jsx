@@ -48,6 +48,14 @@ export default function Profile() {
     staleTime: 60_000,
   });
 
+  const [resetSent, setResetSent] = useState(false);
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: () => apiClient.post('/api/auth/reset-password'),
+    onSuccess: () => { setResetSent(true); toast.success('Reset link sent — check your email'); },
+    onError: (err) => toast.error(err.message || 'Failed to send reset email'),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: () => apiClient.delete('/api/profile'),
     onSuccess: async () => {
@@ -287,6 +295,32 @@ export default function Profile() {
             ))}
           </motion.div>
         </div>
+        {/* Change Password */}
+        <div className="card">
+          <div className="flex items-center gap-2 mb-1">
+            <Icon.Key className="w-5 h-5 text-duo-blue" />
+            <h2 className="font-display font-black text-lg text-text-dark">Change Password</h2>
+          </div>
+          <p className="font-body text-sm text-text-mid mb-4">
+            We'll send a reset link to the email you registered with.
+          </p>
+          {resetSent ? (
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-duo-blue/10 border border-duo-blue/20">
+              <Icon.Check className="w-5 h-5 text-duo-blue flex-shrink-0" />
+              <p className="font-display font-bold text-sm text-duo-blue">Reset link sent — check your inbox</p>
+            </div>
+          ) : (
+            <button
+              onClick={() => resetPasswordMutation.mutate()}
+              disabled={resetPasswordMutation.isPending}
+              className="btn-secondary flex items-center gap-2 px-4 py-2.5 disabled:opacity-60"
+            >
+              <Icon.Key className="w-4 h-4" />
+              {resetPasswordMutation.isPending ? 'Sending...' : 'Send Reset Email'}
+            </button>
+          )}
+        </div>
+
         {/* Danger Zone */}
         <div className="card border-2 border-duo-red/20">
           <div className="flex items-center gap-2 mb-1">

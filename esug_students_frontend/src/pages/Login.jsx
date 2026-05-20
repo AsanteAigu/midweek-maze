@@ -54,7 +54,6 @@ export default function Login() {
                 type="text"
                 value={form.display_name}
                 onChange={(e) => setForm((p) => ({ ...p, display_name: e.target.value }))}
-                placeholder="Your leaderboard name"
                 className="input"
                 required
                 autoFocus
@@ -70,7 +69,6 @@ export default function Login() {
                   type={showPassword ? 'text' : 'password'}
                   value={form.password}
                   onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
-                  placeholder="Your password"
                   className="input pr-12"
                   required
                 />

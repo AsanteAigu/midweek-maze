@@ -193,4 +193,28 @@ async function logout(req, res) {
   return res.json({ success: true, message: 'Logged out successfully' });
 }
 
-module.exports = { register, login, getMe, logout };
+async function sendPasswordReset(req, res) {
+  try {
+    // Get the student's auth email via service role
+    const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(req.userId);
+    if (userError || !user) {
+      return res.status(404).json({ error: true, message: 'User not found', code: 404 });
+    }
+
+    // Use anon client to trigger Supabase's password reset email
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').split(',')[0].trim();
+    const anonClient = getAnonClient();
+    const { error } = await anonClient.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${frontendUrl}/update-password`,
+    });
+
+    if (error) throw error;
+
+    return res.json({ success: true, message: 'Password reset email sent' });
+  } catch (err) {
+    console.error('[AUTH] Password reset error:', err.message);
+    return res.status(500).json({ error: true, message: 'Failed to send reset email', code: 500 });
+  }
+}
+
+module.exports = { register, login, getMe, logout, sendPasswordReset };
