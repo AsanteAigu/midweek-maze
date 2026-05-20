@@ -19,7 +19,7 @@ export function generateRandomSeed() {
 
 export const COURSE_LABELS = {
   computer_engineering: 'Computer Eng.',
-  agriculture_engineering: 'Agriculture Eng.',
+  agriculture_engineering: 'Agricultural Eng.',
   biomedical_engineering: 'Biomedical Eng.',
   material_engineering: 'Material Eng.',
   food_processing: 'Food Processing Eng.',

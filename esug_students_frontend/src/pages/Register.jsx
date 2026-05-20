@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext';
 
 const COURSES = [
   { value: 'computer_engineering', label: 'Computer Engineering' },
-  { value: 'agriculture_engineering', label: 'Agriculture Engineering' },
+  { value: 'agriculture_engineering', label: 'Agricultural Engineering' },
   { value: 'biomedical_engineering', label: 'Biomedical Engineering' },
   { value: 'material_engineering', label: 'Material Engineering' },
   { value: 'food_processing', label: 'Food Processing Engineering' },

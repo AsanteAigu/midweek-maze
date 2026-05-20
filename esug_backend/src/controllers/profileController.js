@@ -2,7 +2,7 @@ const supabase = require('../config/supabase');
 
 async function updateProfile(req, res) {
   try {
-    const allowedFields = ['display_name', 'avatar_seed', 'show_real_name'];
+    const allowedFields = ['display_name', 'avatar_seed', 'show_real_name', 'level', 'course'];
     const updates = {};
 
     for (const field of allowedFields) {
@@ -13,6 +13,21 @@ async function updateProfile(req, res) {
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ error: true, message: 'No valid fields to update', code: 400 });
+    }
+
+    if (updates.level !== undefined) {
+      const level = Number(updates.level);
+      if (![100, 200, 300, 400].includes(level)) {
+        return res.status(400).json({ error: true, message: 'Level must be 100, 200, 300, or 400', code: 400 });
+      }
+      updates.level = level;
+    }
+
+    if (updates.course !== undefined) {
+      const validCourses = ['computer_engineering', 'agriculture_engineering', 'biomedical_engineering', 'material_engineering', 'food_processing'];
+      if (!validCourses.includes(updates.course)) {
+        return res.status(400).json({ error: true, message: 'Invalid course selected', code: 400 });
+      }
     }
 
     // If changing display_name, check uniqueness
@@ -39,7 +54,7 @@ async function updateProfile(req, res) {
       .from('students')
       .update(updates)
       .eq('id', req.userId)
-      .select('id, display_name, avatar_seed, show_real_name, total_xp, updated_at')
+      .select('id, display_name, avatar_seed, show_real_name, total_xp, level, course, updated_at')
       .single();
 
     if (error) throw error;

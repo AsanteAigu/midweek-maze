@@ -20,7 +20,17 @@ export default function Profile() {
     display_name: student?.display_name || '',
     avatar_seed: student?.avatar_seed || '',
     show_real_name: student?.show_real_name || false,
+    level: student?.level || 100,
+    course: student?.course || 'computer_engineering',
   });
+
+  const COURSE_OPTIONS = [
+    { value: 'computer_engineering', label: 'Computer Engineering' },
+    { value: 'agriculture_engineering', label: 'Agricultural Engineering' },
+    { value: 'biomedical_engineering', label: 'Biomedical Engineering' },
+    { value: 'material_engineering', label: 'Material Engineering' },
+    { value: 'food_processing', label: 'Food Processing Engineering' },
+  ];
 
   const { data: historyData, isLoading: historyLoading } = useQuery({
     queryKey: ['xp-history'],
@@ -114,6 +124,37 @@ export default function Profile() {
                   maxLength={30}
                   required
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-display font-bold text-text-dark mb-1.5">
+                    Level
+                  </label>
+                  <select
+                    value={form.level}
+                    onChange={(e) => setForm((p) => ({ ...p, level: Number(e.target.value) }))}
+                    className="input"
+                  >
+                    {[100, 200, 300, 400].map((l) => (
+                      <option key={l} value={l}>Level {l}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-display font-bold text-text-dark mb-1.5">
+                    Course
+                  </label>
+                  <select
+                    value={form.course}
+                    onChange={(e) => setForm((p) => ({ ...p, course: e.target.value }))}
+                    className="input"
+                  >
+                    {COURSE_OPTIONS.map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div>

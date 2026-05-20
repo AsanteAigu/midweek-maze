@@ -14,7 +14,7 @@ import apiClient from '../utils/axiosClient';
 const COURSES = [
   { value: '', label: 'All Courses' },
   { value: 'computer_engineering', label: 'Computer Eng.' },
-  { value: 'agriculture_engineering', label: 'Agriculture Eng.' },
+  { value: 'agriculture_engineering', label: 'Agricultural Eng.' },
   { value: 'biomedical_engineering', label: 'Biomedical Eng.' },
   { value: 'material_engineering', label: 'Material Eng.' },
   { value: 'food_processing', label: 'Food Processing' },
