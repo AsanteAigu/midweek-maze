@@ -583,7 +583,7 @@ export default function Challenge() {
                     question={{
                       question_type: challenge.question_type || challenge.answer_mode || 'text',
                       options: challenge.answer_options || [],
-                      image_url: challenge.image_url || null,
+                      image_url: null,
                       question_text: challenge.description,
                     }}
                     value={answer}
