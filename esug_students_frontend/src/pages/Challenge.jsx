@@ -252,7 +252,7 @@ function QuestionAnswerInput({ question, value, onChange }) {
 }
 
 
-// ── Countdown timer ────────────────────────────────────────────────────────────
+// ── Countdown timer (pauses while tab is hidden) ───────────────────────────────
 function useCountdown(challengeId, timeLimitSeconds, onExpire) {
   const [secsLeft, setSecsLeft] = useState(null);
   const expiredRef = useRef(false);
@@ -261,20 +261,25 @@ function useCountdown(challengeId, timeLimitSeconds, onExpire) {
     if (!challengeId || !timeLimitSeconds) { setSecsLeft(null); return; }
 
     const key = `timer_start_${challengeId}`;
-    let startTime = parseInt(localStorage.getItem(key) || '0', 10);
-    if (!startTime) {
-      startTime = Date.now();
-      localStorage.setItem(key, String(startTime));
+    const hiddenKey = `timer_hidden_${challengeId}`;
+
+    if (!localStorage.getItem(key)) {
+      localStorage.setItem(key, String(Date.now()));
+    }
+
+    function getStartTime() {
+      return parseInt(localStorage.getItem(key) || '0', 10);
     }
 
     function calcRemaining() {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const elapsed = Math.floor((Date.now() - getStartTime()) / 1000);
       return Math.max(0, timeLimitSeconds - elapsed);
     }
 
     setSecsLeft(calcRemaining());
 
     const interval = setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
       const remaining = calcRemaining();
       setSecsLeft(remaining);
       if (remaining === 0 && !expiredRef.current) {
@@ -284,7 +289,34 @@ function useCountdown(challengeId, timeLimitSeconds, onExpire) {
       }
     }, 1000);
 
-    return () => clearInterval(interval);
+    function handleVisibility() {
+      if (document.visibilityState === 'hidden') {
+        // Record when the tab was hidden
+        localStorage.setItem(hiddenKey, String(Date.now()));
+      } else {
+        // Tab is visible again — push the start time forward by the time away
+        const hiddenAt = parseInt(localStorage.getItem(hiddenKey) || '0', 10);
+        if (hiddenAt) {
+          const pausedMs = Date.now() - hiddenAt;
+          localStorage.setItem(key, String(getStartTime() + pausedMs));
+          localStorage.removeItem(hiddenKey);
+        }
+        const remaining = calcRemaining();
+        setSecsLeft(remaining);
+        if (remaining === 0 && !expiredRef.current) {
+          expiredRef.current = true;
+          clearInterval(interval);
+          onExpire();
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [challengeId, timeLimitSeconds]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return secsLeft;
