@@ -21,6 +21,9 @@ router.patch(
 // GET /api/profile/xp-history — own XP history
 router.get('/xp-history', authMiddleware, profileController.getXpHistory);
 
+// DELETE /api/profile — delete own account (auth required)
+router.delete('/', authMiddleware, profileController.deleteAccount);
+
 // GET /api/profile/:displayName — public profile
 router.get('/:displayName', profileController.getPublicProfile);
 

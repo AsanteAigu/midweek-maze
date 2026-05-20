@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { pageTransition, staggerContainer, staggerItem } from '../animations/presets';
+import { pageTransition, staggerContainer, staggerItem, scaleIn } from '../animations/presets';
 import PageWrapper from '../components/PageWrapper';
 import { CardSkeleton } from '../components/SkeletonLoader';
 import AvatarPicker from '../components/AvatarPicker';
@@ -13,9 +14,12 @@ import { getAvatarUrl, COURSE_LABELS } from '../utils/avatar';
 import apiClient from '../utils/axiosClient';
 
 export default function Profile() {
-  const { student, updateStudent } = useAuth();
+  const { student, updateStudent, logout } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editMode, setEditMode] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
   const [form, setForm] = useState({
     display_name: student?.display_name || '',
     avatar_seed: student?.avatar_seed || '',
@@ -42,6 +46,16 @@ export default function Profile() {
     queryKey: ['my-submissions'],
     queryFn: () => apiClient.get('/api/submit/me').then((r) => r.data),
     staleTime: 60_000,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => apiClient.delete('/api/profile'),
+    onSuccess: async () => {
+      toast.success('Account deleted');
+      await logout();
+      navigate('/');
+    },
+    onError: (err) => toast.error(err.message || 'Failed to delete account'),
   });
 
   const updateMutation = useMutation({
@@ -273,7 +287,76 @@ export default function Profile() {
             ))}
           </motion.div>
         </div>
+        {/* Danger Zone */}
+        <div className="card border-2 border-duo-red/20">
+          <div className="flex items-center gap-2 mb-1">
+            <Icon.Warning className="w-5 h-5 text-duo-red" />
+            <h2 className="font-display font-black text-lg text-duo-red">Danger Zone</h2>
+          </div>
+          <p className="font-body text-sm text-text-mid mb-4">
+            Permanently delete your account and all your data. This cannot be undone.
+          </p>
+          <button
+            onClick={() => { setShowDeleteModal(true); setDeleteConfirm(''); }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border-2 border-duo-red text-duo-red font-display font-bold text-sm hover:bg-duo-red hover:text-white transition-colors"
+          >
+            <Icon.XMark className="w-4 h-4" />
+            Delete My Account
+          </button>
+        </div>
       </motion.div>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+            <motion.div {...scaleIn} className="bg-white rounded-3xl border-2 border-duo-red/30 shadow-card-hover p-6 max-w-sm w-full">
+              <div className="text-center mb-5">
+                <div className="flex justify-center mb-3">
+                  <div className="w-14 h-14 bg-duo-red/10 rounded-2xl flex items-center justify-center">
+                    <Icon.Warning className="w-8 h-8 text-duo-red" />
+                  </div>
+                </div>
+                <h3 className="font-display font-black text-xl text-text-dark">Delete account?</h3>
+                <p className="font-body text-text-mid text-sm mt-1">
+                  This will permanently erase your profile, XP, and all submissions.
+                </p>
+              </div>
+
+              <div className="mb-5">
+                <label className="block font-display font-bold text-sm text-text-dark mb-1.5">
+                  Type <span className="text-duo-red">{student?.display_name}</span> to confirm
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirm}
+                  onChange={(e) => setDeleteConfirm(e.target.value)}
+                  className="input"
+                  placeholder={student?.display_name}
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="btn-secondary flex-1 py-2.5"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => deleteMutation.mutate()}
+                  disabled={deleteConfirm !== student?.display_name || deleteMutation.isPending}
+                  className="flex-1 py-2.5 rounded-2xl border-2 border-duo-red bg-duo-red text-white font-display font-black disabled:opacity-40 hover:bg-red-600 transition-colors"
+                >
+                  {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageWrapper>
   );
 }

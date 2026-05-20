@@ -126,4 +126,25 @@ async function getPublicProfile(req, res) {
   }
 }
 
-module.exports = { updateProfile, getXpHistory, getPublicProfile };
+async function deleteAccount(req, res) {
+  try {
+    // Delete student row — cascades to submissions and xp_history
+    const { error: dbError } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', req.userId);
+
+    if (dbError) throw dbError;
+
+    // Remove the Supabase Auth user
+    const { error: authError } = await supabase.auth.admin.deleteUser(req.userId);
+    if (authError) throw authError;
+
+    return res.json({ success: true, message: 'Account deleted' });
+  } catch (err) {
+    console.error('[PROFILE] Delete account error:', err.message);
+    return res.status(500).json({ error: true, message: 'Failed to delete account', code: 500 });
+  }
+}
+
+module.exports = { updateProfile, getXpHistory, getPublicProfile, deleteAccount };
