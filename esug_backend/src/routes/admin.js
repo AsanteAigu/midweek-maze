@@ -25,7 +25,7 @@ const upload = multer({
 const challengeValidation = [
   body('title').trim().notEmpty().withMessage('Title is required'),
   body('description').trim().notEmpty().withMessage('Description is required'),
-  body('challenge_type').isIn(['quiz', 'puzzle', 'problem']).withMessage('Type must be quiz, puzzle, or problem'),
+  body('challenge_type').isIn(['quiz', 'puzzle', 'problem', 'midweek_maze']).withMessage('Type must be quiz, puzzle, problem, or midweek_maze'),
   body('answer_mode').optional().isIn(['text', 'multiple_choice']).withMessage('Answer mode must be text or multiple_choice'),
   body('question_type').optional().isIn([
     'text', 'multiple_choice', 'true_false', 'fill_blank',

@@ -921,12 +921,351 @@ function SubmissionsView({ challengeId, adminSecret }) {
 }
 
 // ─────────────────────────────────────────
+// Midweek Maze — Game Catalogue & Publisher
+// ─────────────────────────────────────────
+
+const CATEGORY_META = {
+  'Logic & Deduction': { color: 'bg-duo-blue/10 text-duo-blue border-duo-blue/30', dot: 'bg-duo-blue' },
+  'Visual & Spatial':  { color: 'bg-duo-purple/10 text-duo-purple border-duo-purple/30', dot: 'bg-duo-purple' },
+  'Word & Language':   { color: 'bg-duo-green/10 text-duo-green border-duo-green/30', dot: 'bg-duo-green' },
+  'Math & Arithmetic': { color: 'bg-duo-orange/10 text-duo-orange border-duo-orange/30', dot: 'bg-duo-orange' },
+  'Logic Puzzles':     { color: 'bg-duo-red/10 text-duo-red border-duo-red/30', dot: 'bg-duo-red' },
+  'Drawing & Spatial': { color: 'bg-teal-100 text-teal-700 border-teal-200', dot: 'bg-teal-500' },
+  'Olympiad':          { color: 'bg-duo-yellow/20 text-yellow-700 border-duo-yellow/40', dot: 'bg-duo-yellow' },
+  'Extreme':           { color: 'bg-gray-100 text-gray-700 border-gray-300', dot: 'bg-gray-500' },
+};
+
+const GAMES_LIST = [
+  // Logic & Deduction
+  { slug: 'math-cross',            name: 'Math Cross',             category: 'Logic & Deduction', xp: 150, diff: 'Medium'   },
+  { slug: 'number-maze',           name: 'Number Maze',            category: 'Logic & Deduction', xp: 200, diff: 'Hard'     },
+  { slug: 'mini-sudoku',           name: 'Mini Sudoku',            category: 'Logic & Deduction', xp: 150, diff: 'Medium'   },
+  { slug: 'logic-gates',           name: 'Logic Gates',            category: 'Logic & Deduction', xp: 200, diff: 'Hard'     },
+  { slug: 'cryptarithmetic',       name: 'Cryptarithmetic',        category: 'Logic & Deduction', xp: 200, diff: 'Hard'     },
+  { slug: 'night-bridge',          name: 'Canyon Crossing',        category: 'Logic & Deduction', xp: 70,  diff: 'Hard'     },
+  // Visual & Spatial
+  { slug: 'pattern-completion',    name: 'Pattern Completion',     category: 'Visual & Spatial',  xp: 150, diff: 'Medium'   },
+  { slug: 'tangram-solver',        name: 'Tangram Solver',         category: 'Visual & Spatial',  xp: 200, diff: 'Hard'     },
+  { slug: 'tower-of-hanoi',        name: 'Tower of Hanoi',         category: 'Visual & Spatial',  xp: 200, diff: 'Hard'     },
+  { slug: 'maze-navigator',        name: 'Maze Navigator',         category: 'Visual & Spatial',  xp: 150, diff: 'Medium'   },
+  { slug: 'rotational-symmetry',   name: 'Rotational Symmetry',    category: 'Visual & Spatial',  xp: 150, diff: 'Medium'   },
+  // Word & Language
+  { slug: 'word-worm',             name: 'Word Worm',              category: 'Word & Language',   xp: 150, diff: 'Medium'   },
+  { slug: 'anagram-solver',        name: 'Anagram Solver',         category: 'Word & Language',   xp: 150, diff: 'Medium'   },
+  { slug: 'mini-crossword',        name: 'Mini Crossword',         category: 'Word & Language',   xp: 150, diff: 'Medium'   },
+  { slug: 'pangram-builder',       name: 'Pangram Builder',        category: 'Word & Language',   xp: 200, diff: 'Hard'     },
+  { slug: 'etymology-chain',       name: 'Etymology Chain',        category: 'Word & Language',   xp: 200, diff: 'Hard'     },
+  // Math & Arithmetic
+  { slug: 'equation-builder',      name: 'Equation Builder',       category: 'Math & Arithmetic', xp: 200, diff: 'Hard'     },
+  { slug: 'prime-factorization',   name: 'Prime Factorization',    category: 'Math & Arithmetic', xp: 150, diff: 'Medium'   },
+  { slug: 'fibonacci-sequence',    name: 'Fibonacci Sequence',     category: 'Math & Arithmetic', xp: 150, diff: 'Medium'   },
+  { slug: 'modular-arithmetic',    name: 'Modular Arithmetic',     category: 'Math & Arithmetic', xp: 200, diff: 'Hard'     },
+  { slug: 'fraction-simplification', name: 'Fraction Simplification', category: 'Math & Arithmetic', xp: 150, diff: 'Medium' },
+  // Logic Puzzles
+  { slug: 'ages-of-three',         name: 'Ages of Three',          category: 'Logic Puzzles',     xp: 200, diff: 'Hard'     },
+  { slug: 'knights-and-knaves',    name: 'Knights & Knaves',       category: 'Logic Puzzles',     xp: 200, diff: 'Hard'     },
+  { slug: 'river-crossing',        name: 'River Crossing',         category: 'Logic Puzzles',     xp: 200, diff: 'Hard'     },
+  { slug: 'monty-hall',            name: 'Monty Hall',             category: 'Logic Puzzles',     xp: 200, diff: 'Hard'     },
+  { slug: 'einsteins-riddle',      name: "Einstein's Riddle",      category: 'Logic Puzzles',     xp: 250, diff: 'Hard'     },
+  // Drawing & Spatial
+  { slug: 'angry-roosters',        name: 'Angry Roosters',         category: 'Drawing & Spatial', xp: 150, diff: 'Medium'   },
+  { slug: 'bridges-and-islands',   name: 'Bridges & Islands',      category: 'Drawing & Spatial', xp: 200, diff: 'Hard'     },
+  { slug: 'dot-connection',        name: 'Dot Connection',         category: 'Drawing & Spatial', xp: 200, diff: 'Hard'     },
+  { slug: 'pentomino-puzzle',      name: 'Pentomino Puzzle',       category: 'Drawing & Spatial', xp: 200, diff: 'Hard'     },
+  { slug: 'star-placement',        name: 'Star Placement',         category: 'Drawing & Spatial', xp: 150, diff: 'Medium'   },
+  // Olympiad
+  { slug: 'polyhedral-nets',       name: 'Polyhedral Nets',        category: 'Olympiad',          xp: 300, diff: 'Olympiad' },
+  { slug: 'combinatorial-lock',    name: 'Combinatorial Lock',     category: 'Olympiad',          xp: 300, diff: 'Olympiad' },
+  { slug: 'recursive-sequence',    name: 'Recursive Sequence',     category: 'Olympiad',          xp: 300, diff: 'Olympiad' },
+  { slug: 'eulers-problem',        name: "Euler's Problem",        category: 'Olympiad',          xp: 300, diff: 'Olympiad' },
+  { slug: 'infinite-series',       name: 'Infinite Series',        category: 'Olympiad',          xp: 300, diff: 'Olympiad' },
+  // Extreme
+  { slug: 'rubiks-cube',           name: "Rubik's Cube 2×2",       category: 'Extreme',           xp: 400, diff: 'Extreme'  },
+  { slug: 'sat-problem',           name: 'SAT Problem',            category: 'Extreme',           xp: 400, diff: 'Extreme'  },
+  { slug: 'graph-coloring',        name: 'Graph Coloring',         category: 'Extreme',           xp: 400, diff: 'Extreme'  },
+  { slug: 'partition-problem',     name: 'Partition Problem',      category: 'Extreme',           xp: 400, diff: 'Extreme'  },
+  { slug: 'travelling-salesman',   name: 'Travelling Salesman',    category: 'Extreme',           xp: 400, diff: 'Extreme'  },
+];
+
+const DIFF_BADGE = {
+  Medium:  'bg-duo-blue/10 text-duo-blue',
+  Hard:    'bg-duo-red/10 text-duo-red',
+  Olympiad:'bg-duo-yellow/20 text-yellow-700',
+  Extreme: 'bg-gray-100 text-gray-600',
+};
+
+const emptyMazeForm = { opens_at: '', closes_at: '', week_number: '', xp_reward: '' };
+
+function PublishGameForm({ game, adminSecret, onSuccess, onCancel }) {
+  const [form, setForm] = useState({ ...emptyMazeForm, xp_reward: String(game.xp) });
+  const [loading, setLoading] = useState(false);
+
+  function set(field, value) { setForm((p) => ({ ...p, [field]: value })); }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!form.opens_at || !form.closes_at || !form.week_number) {
+      toast.error('Fill in opens at, closes at, and week number');
+      return;
+    }
+    setLoading(true);
+    try {
+      await apiClient({
+        method: 'post',
+        url: '/api/admin/challenges',
+        data: {
+          title: `Midweek Maze: ${game.name}`,
+          description: `This week's Midweek Maze challenge is ${game.name} — a ${game.category} puzzle. Complete it before the window closes to earn XP!`,
+          challenge_type: 'midweek_maze',
+          answer_key: game.slug,
+          question_type: 'text',
+          week_number: parseInt(form.week_number),
+          opens_at: new Date(form.opens_at).toISOString(),
+          closes_at: new Date(form.closes_at).toISOString(),
+          xp_reward: parseInt(form.xp_reward) || game.xp,
+          partial_xp: 0,
+        },
+        headers: { 'x-admin-secret': adminSecret },
+      });
+      toast.success(`${game.name} published!`);
+      onSuccess();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <motion.form
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      onSubmit={handleSubmit}
+      className="overflow-hidden border-t border-surface-border bg-surface-off p-4 space-y-3"
+    >
+      <p className="font-display font-bold text-sm text-text-dark">Publish: {game.name}</p>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-display font-bold text-text-mid mb-1">Opens At *</label>
+          <div className="flex gap-1">
+            <input type="datetime-local" value={form.opens_at} onChange={(e) => set('opens_at', e.target.value)} className="input text-xs flex-1" required />
+            <button type="button" onClick={() => set('opens_at', formatDateForInput(new Date().toISOString()))}
+              className="px-2 py-1.5 rounded-lg border-2 border-duo-blue text-duo-blue font-display font-bold text-xs hover:bg-duo-blue hover:text-white transition-colors flex-shrink-0">
+              Now
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="block text-xs font-display font-bold text-text-mid mb-1">Closes At *</label>
+          <input type="datetime-local" value={form.closes_at} onChange={(e) => set('closes_at', e.target.value)} className="input text-xs" required />
+        </div>
+        <div>
+          <label className="block text-xs font-display font-bold text-text-mid mb-1">Week Number *</label>
+          <input type="number" min="1" value={form.week_number} onChange={(e) => set('week_number', e.target.value)} placeholder="e.g. 7" className="input text-xs" required />
+        </div>
+        <div>
+          <label className="block text-xs font-display font-bold text-text-mid mb-1">XP Reward</label>
+          <input type="number" min="1" value={form.xp_reward} onChange={(e) => set('xp_reward', e.target.value)} className="input text-xs" />
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <button type="button" onClick={onCancel} className="btn-secondary flex-1 py-2 text-sm">Cancel</button>
+        <button type="submit" disabled={loading} className="btn-primary flex-1 py-2 text-sm flex items-center justify-center gap-1.5 disabled:opacity-60">
+          <Icon.Rocket className="w-3.5 h-3.5" />
+          {loading ? 'Publishing…' : 'Publish Game'}
+        </button>
+      </div>
+    </motion.form>
+  );
+}
+
+function GameCard({ game, adminSecret, onPublished, publishedSlug }) {
+  const [publishing, setPublishing] = useState(false);
+  const isLive = publishedSlug === game.slug;
+  const meta = CATEGORY_META[game.category] || CATEGORY_META['Extreme'];
+
+  return (
+    <div className={`rounded-2xl border-2 overflow-hidden transition-all ${isLive ? 'border-duo-blue shadow-blue' : 'border-surface-border bg-white'}`}>
+      <div className="p-3">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <p className="font-display font-bold text-sm text-text-dark leading-tight">{game.name}</p>
+          {isLive && <span className="bg-duo-blue text-white font-display font-bold text-xs px-2 py-0.5 rounded-full animate-pulse flex-shrink-0">LIVE</span>}
+        </div>
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          <span className={`inline-block text-xs font-display font-bold px-2 py-0.5 rounded-full border ${meta.color}`}>
+            {game.category}
+          </span>
+          <span className={`inline-block text-xs font-display font-bold px-2 py-0.5 rounded-full ${DIFF_BADGE[game.diff] || DIFF_BADGE.Hard}`}>
+            {game.diff}
+          </span>
+          <span className="inline-block text-xs font-mono text-text-muted bg-surface-off px-2 py-0.5 rounded-full">
+            {game.xp} XP
+          </span>
+        </div>
+        <button
+          onClick={() => setPublishing(!publishing)}
+          className={`w-full py-2 text-xs font-display font-bold rounded-xl border-2 transition-all flex items-center justify-center gap-1 ${
+            publishing
+              ? 'border-surface-border text-text-mid bg-surface-off'
+              : 'border-duo-blue text-duo-blue hover:bg-duo-blue hover:text-white'
+          }`}
+        >
+          {publishing ? (
+            <><Icon.XMark className="w-3.5 h-3.5" /> Cancel</>
+          ) : (
+            <><Icon.Rocket className="w-3.5 h-3.5" /> Publish</>
+          )}
+        </button>
+      </div>
+      <AnimatePresence>
+        {publishing && (
+          <PublishGameForm
+            game={game}
+            adminSecret={adminSecret}
+            onSuccess={() => { setPublishing(false); onPublished(); }}
+            onCancel={() => setPublishing(false)}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function MidweekMazeTab({ challenges, adminSecret, onAction }) {
+  const mazeChallenges = challenges.filter((c) => c.challenge_type === 'midweek_maze');
+  const liveSlug = mazeChallenges.find((c) => c.is_active)?.answer_key || null;
+
+  const categories = [...new Set(GAMES_LIST.map((g) => g.category))];
+
+  async function handleToggleMaze(challenge) {
+    try {
+      await apiClient({
+        method: 'patch',
+        url: `/api/admin/challenges/${challenge.id}`,
+        data: { is_active: !challenge.is_active },
+        headers: { 'x-admin-secret': adminSecret },
+      });
+      toast.success(challenge.is_active ? 'Game deactivated' : 'Game activated!');
+      onAction();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
+  async function handleDeleteMaze(challenge) {
+    if (!confirm(`Remove "${challenge.title}" from the schedule? This also removes all submissions.`)) return;
+    try {
+      await apiClient({
+        method: 'delete',
+        url: `/api/admin/challenges/${challenge.id}`,
+        headers: { 'x-admin-secret': adminSecret },
+      });
+      toast.success('Removed');
+      onAction();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Published maze challenges */}
+      <div>
+        <h3 className="font-display font-black text-lg text-text-dark mb-3">
+          Scheduled Games
+          <span className="font-mono text-text-muted font-normal text-sm ml-2">({mazeChallenges.length})</span>
+        </h3>
+
+        {mazeChallenges.length === 0 ? (
+          <div className="card text-center py-8">
+            <Icon.Rocket className="w-10 h-10 text-text-muted mx-auto mb-2" />
+            <p className="font-display font-bold text-text-mid text-sm">No games scheduled yet — publish one below</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {mazeChallenges.map((c) => {
+              const game = GAMES_LIST.find((g) => g.slug === c.answer_key);
+              const meta = game ? CATEGORY_META[game.category] : CATEGORY_META['Extreme'];
+              return (
+                <div key={c.id} className={`flex items-center gap-3 p-3 rounded-2xl border-2 bg-white ${c.is_active ? 'border-duo-blue' : 'border-surface-border'}`}>
+                  {game && (
+                    <span className={`inline-block text-xs font-display font-bold px-2 py-1 rounded-xl border ${meta.color} flex-shrink-0`}>
+                      {game.category}
+                    </span>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-display font-bold text-sm text-text-dark truncate">{game?.name ?? c.title}</p>
+                      {c.is_active && <span className="bg-duo-blue text-white font-display font-bold text-xs px-2 py-0.5 rounded-full animate-pulse flex-shrink-0">LIVE</span>}
+                    </div>
+                    <p className="font-mono text-xs text-text-muted">
+                      Wk {c.week_number} · {new Date(c.opens_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      {' — '}
+                      {new Date(c.closes_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      {' · '}{c.xp_reward} XP
+                    </p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => handleToggleMaze(c)}
+                      className={`text-xs font-display font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 ${c.is_active ? 'btn-secondary' : 'btn-primary'}`}
+                    >
+                      {c.is_active ? <><Icon.Pause className="w-3.5 h-3.5" /> Deactivate</> : <><Icon.Play className="w-3.5 h-3.5" /> Activate</>}
+                    </button>
+                    <button onClick={() => handleDeleteMaze(c)} className="text-xs font-display font-bold px-2 py-1.5 rounded-xl bg-duo-red/10 text-duo-red hover:bg-duo-red hover:text-white transition-colors">
+                      <Icon.Trash className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Game library by category */}
+      <div>
+        <h3 className="font-display font-black text-lg text-text-dark mb-1">Game Library</h3>
+        <p className="font-body text-sm text-text-muted mb-4">41 puzzle games — click Publish to schedule any game as this week's Midweek Maze</p>
+
+        {categories.map((cat) => {
+          const games = GAMES_LIST.filter((g) => g.category === cat);
+          const meta = CATEGORY_META[cat] || CATEGORY_META['Extreme'];
+          return (
+            <div key={cat} className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className={`w-2.5 h-2.5 rounded-full ${meta.dot}`} />
+                <h4 className="font-display font-bold text-base text-text-dark">{cat}</h4>
+                <span className="font-mono text-xs text-text-muted">({games.length})</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {games.map((game) => (
+                  <GameCard
+                    key={game.slug}
+                    game={game}
+                    adminSecret={adminSecret}
+                    onPublished={onAction}
+                    publishedSlug={liveSlug}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────
 // Main Admin Dashboard
 // ─────────────────────────────────────────
 export default function Admin() {
   const [adminSecret, setAdminSecret] = useState(ADMIN_SECRET);
   const [unlocked, setUnlocked] = useState(!!ADMIN_SECRET);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [activeTab, setActiveTab] = useState('challenges');
   const queryClient = useQueryClient();
 
   const { data: statsData } = useQuery({
@@ -982,18 +1321,41 @@ export default function Admin() {
               <Icon.Wrench className="w-6 h-6 text-duo-blue" />
               <h1 className="font-display font-black text-2xl text-text-dark">Admin Dashboard</h1>
             </div>
-            <p className="font-body text-text-muted text-sm">Midweek Maze — Admin Control Center</p>
+            <p className="font-body text-text-muted text-sm">ISAG Quiz Platform — Admin Control Center</p>
           </div>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="flex items-center gap-2 btn-primary px-5 py-2.5 text-sm"
-          >
-            {showCreateForm ? (
-              <><Icon.XMark className="w-4 h-4" /> Cancel</>
-            ) : (
-              <><Icon.Plus className="w-4 h-4" /> New Challenge</>
-            )}
-          </button>
+          {activeTab === 'challenges' && (
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="flex items-center gap-2 btn-primary px-5 py-2.5 text-sm"
+            >
+              {showCreateForm ? (
+                <><Icon.XMark className="w-4 h-4" /> Cancel</>
+              ) : (
+                <><Icon.Plus className="w-4 h-4" /> New Challenge</>
+              )}
+            </button>
+          )}
+        </div>
+
+        {/* Tab Bar */}
+        <div className="flex gap-2 border-b-2 border-surface-border pb-0">
+          {[
+            { id: 'challenges', label: 'Weekly Challenges', icon: <Icon.ClipboardList className="w-4 h-4" /> },
+            { id: 'maze',       label: 'Midweek Maze',      icon: <Icon.Target className="w-4 h-4" /> },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => { setActiveTab(tab.id); setShowCreateForm(false); }}
+              className={`flex items-center gap-2 font-display font-bold text-sm px-4 py-3 border-b-2 -mb-0.5 transition-all ${
+                activeTab === tab.id
+                  ? 'border-duo-blue text-duo-blue'
+                  : 'border-transparent text-text-mid hover:text-text-dark'
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* Stats */}
@@ -1032,43 +1394,62 @@ export default function Admin() {
           )}
         </AnimatePresence>
 
-        {/* Challenges List */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-black text-xl text-text-dark">
-              All Challenges <span className="font-mono text-text-muted font-normal text-base">({challenges.length})</span>
-            </h2>
-            <button onClick={refreshAll} className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5">
-              <Icon.Refresh className="w-3.5 h-3.5" />
-              Refresh
-            </button>
+        {/* Challenges Tab */}
+        {activeTab === 'challenges' && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display font-black text-xl text-text-dark">
+                All Challenges <span className="font-mono text-text-muted font-normal text-base">({challenges.filter((c) => c.challenge_type !== 'midweek_maze').length})</span>
+              </h2>
+              <button onClick={refreshAll} className="btn-secondary text-xs px-3 py-2 flex items-center gap-1.5">
+                <Icon.Refresh className="w-3.5 h-3.5" />
+                Refresh
+              </button>
+            </div>
+
+            {isLoading && (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)}
+              </div>
+            )}
+
+            {!isLoading && challenges.filter((c) => c.challenge_type !== 'midweek_maze').length === 0 && (
+              <div className="card text-center py-12">
+                <Icon.ClipboardList className="w-12 h-12 text-text-muted mx-auto mb-3" />
+                <p className="font-display font-bold text-text-mid">No challenges yet — create your first one!</p>
+              </div>
+            )}
+
+            <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-3">
+              {challenges.filter((c) => c.challenge_type !== 'midweek_maze').map((challenge) => (
+                <motion.div key={challenge.id} variants={staggerItem}>
+                  <ChallengeRow
+                    challenge={challenge}
+                    adminSecret={adminSecret}
+                    onAction={refreshAll}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
+        )}
 
-          {isLoading && (
-            <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)}
-            </div>
-          )}
-
-          {!isLoading && challenges.length === 0 && (
-            <div className="card text-center py-12">
-              <Icon.ClipboardList className="w-12 h-12 text-text-muted mx-auto mb-3" />
-              <p className="font-display font-bold text-text-mid">No challenges yet — create your first one!</p>
-            </div>
-          )}
-
-          <motion.div variants={staggerContainer} initial="initial" animate="animate" className="space-y-3">
-            {challenges.map((challenge) => (
-              <motion.div key={challenge.id} variants={staggerItem}>
-                <ChallengeRow
-                  challenge={challenge}
-                  adminSecret={adminSecret}
-                  onAction={refreshAll}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+        {/* Midweek Maze Tab */}
+        {activeTab === 'maze' && (
+          <div>
+            {isLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}
+              </div>
+            ) : (
+              <MidweekMazeTab
+                challenges={challenges}
+                adminSecret={adminSecret}
+                onAction={refreshAll}
+              />
+            )}
+          </div>
+        )}
       </motion.div>
     </div>
   );

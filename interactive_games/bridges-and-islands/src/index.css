@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background-color: #F7F7F7;
+    color: #3C3C3C;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+  }
+}
+
+@layer components {
+  /* Matches Midweek Maze exactly */
+  .btn-primary {
+    @apply bg-duo-blue text-white font-display font-bold px-6 py-3 rounded-2xl
+           shadow-blue hover:bg-duo-blue-dark active:shadow-none active:translate-y-1
+           transition-all duration-150 cursor-pointer select-none;
+  }
+  .btn-secondary {
+    @apply bg-white text-duo-blue font-display font-bold px-6 py-3 rounded-2xl
+           border-2 border-surface-border hover:border-duo-blue hover:bg-duo-blue/10
+           transition-all duration-150 cursor-pointer select-none;
+  }
+  .card {
+    @apply bg-surface-card rounded-3xl border border-surface-border shadow-card p-5;
+  }
+  .xp-badge {
+    @apply inline-flex items-center gap-1 bg-duo-yellow text-text-dark
+           font-display font-bold text-sm px-3 py-1 rounded-full;
+  }
+}
+
+/* ── Walking figure animations ─────────────────────────────────────── */
+
+@keyframes leg-left {
+  0%, 100% { transform: rotate(24deg); }
+  50%       { transform: rotate(-24deg); }
+}
+@keyframes leg-right {
+  0%, 100% { transform: rotate(-24deg); }
+  50%       { transform: rotate(24deg); }
+}
+@keyframes arm-left {
+  0%, 100% { transform: rotate(-20deg); }
+  50%       { transform: rotate(20deg); }
+}
+@keyframes arm-right {
+  0%, 100% { transform: rotate(20deg); }
+  50%       { transform: rotate(-20deg); }
+}
+@keyframes body-bob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-2px); }
+}
+
+@keyframes lantern-float {
+  0%, 100% { transform: translateY(0px) rotate(-4deg); }
+  50%       { transform: translateY(-5px) rotate(4deg); }
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.5); }
+}
+@keyframes moon-glow {
+  0%, 100% { box-shadow: 0 0 18px 6px rgba(255, 240, 160, 0.2); }
+  50%       { box-shadow: 0 0 28px 12px rgba(255, 240, 160, 0.38); }
+}
+@keyframes bridge-sway {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(1.5px); }
+}
+
+.walk-leg-left  { animation: leg-left  0.4s ease-in-out infinite; }
+.walk-leg-right { animation: leg-right 0.4s ease-in-out infinite; }
+.walk-arm-left  { animation: arm-left  0.4s ease-in-out infinite; }
+.walk-arm-right { animation: arm-right 0.4s ease-in-out infinite; }
+.walk-body      { animation: body-bob  0.4s ease-in-out infinite; }
+.lantern-float  { animation: lantern-float 2.2s ease-in-out infinite; }
+.moon-pulse     { animation: moon-glow 3s ease-in-out infinite; }
+.bridge-sway    { animation: bridge-sway 4s ease-in-out infinite; }
+
+.star { animation: star-twinkle 2.5s ease-in-out infinite; }
+.star:nth-child(2)  { animation-delay: 0.5s; }
+.star:nth-child(3)  { animation-delay: 1.0s; }
+.star:nth-child(4)  { animation-delay: 1.5s; }
+.star:nth-child(5)  { animation-delay: 0.7s; }
+.star:nth-child(6)  { animation-delay: 1.8s; }
+.star:nth-child(7)  { animation-delay: 0.3s; }
+.star:nth-child(8)  { animation-delay: 1.2s; }
+.star:nth-child(9)  { animation-delay: 2.0s; }
+.star:nth-child(10) { animation-delay: 0.9s; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #F7F7F7; }
+::-webkit-scrollbar-thumb { background: #AFAFAF; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #777; }
