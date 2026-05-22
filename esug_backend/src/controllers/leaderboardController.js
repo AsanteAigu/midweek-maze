@@ -54,53 +54,83 @@ async function getAllTime(req, res) {
 
 async function getWeekly(req, res) {
   try {
-    // Find most recently scored challenge
-    const { data: latestChallenge, error: challengeError } = await supabase
+    // All distinct week numbers that have at least one scored challenge
+    const { data: scoredChallenges, error: wErr } = await supabase
       .from('challenges')
-      .select('id, title, week_number')
-      .eq('is_scored', true)
-      .order('closes_at', { ascending: false })
-      .limit(1)
-      .single();
+      .select('week_number')
+      .eq('is_scored', true);
 
-    if (challengeError || !latestChallenge) {
-      return res.json({
-        success: true,
-        leaderboard: [],
-        challenge: null,
-        message: 'No scored challenges yet',
-      });
+    if (wErr) throw wErr;
+
+    const availableWeeks = [...new Set((scoredChallenges || []).map((c) => c.week_number))]
+      .sort((a, b) => b - a); // descending — latest first
+
+    if (availableWeeks.length === 0) {
+      return res.json({ success: true, leaderboard: [], week: null, availableWeeks: [] });
     }
 
+    // Use ?week=N to browse; default to the latest scored week
+    const requestedWeek = req.query.week ? parseInt(req.query.week) : availableWeeks[0];
+
+    if (!availableWeeks.includes(requestedWeek)) {
+      return res.json({ success: true, leaderboard: [], week: requestedWeek, availableWeeks });
+    }
+
+    // All scored challenges for that week
+    const { data: weekChallenges, error: cErr } = await supabase
+      .from('challenges')
+      .select('id')
+      .eq('week_number', requestedWeek)
+      .eq('is_scored', true);
+
+    if (cErr) throw cErr;
+
+    const challengeIds = (weekChallenges || []).map((c) => c.id);
+
+    if (challengeIds.length === 0) {
+      return res.json({ success: true, leaderboard: [], week: requestedWeek, availableWeeks });
+    }
+
+    // All submissions for those challenges
     const { data: submissions, error: subError } = await supabase
       .from('submissions')
       .select(`
-        xp_earned, submitted_at,
+        xp_earned,
         students (id, display_name, avatar_seed, level, course, show_real_name, first_name, last_name)
       `)
-      .eq('challenge_id', latestChallenge.id)
-      .order('xp_earned', { ascending: false })
-      .order('submitted_at', { ascending: true });
+      .in('challenge_id', challengeIds);
 
     if (subError) throw subError;
 
-    const ranked = submissions.map((sub, index) => ({
-      rank: index + 1,
-      display_name: sub.students.display_name,
-      avatar_seed: sub.students.avatar_seed,
-      level: sub.students.level,
-      course: sub.students.course,
-      xp_earned: sub.xp_earned,
-      submitted_at: sub.submitted_at,
-      ...(sub.students.show_real_name
-        ? { first_name: sub.students.first_name, last_name: sub.students.last_name }
-        : {}),
-    }));
+    // Aggregate total XP per student for this week
+    const studentMap = new Map();
+    for (const sub of submissions || []) {
+      const s = sub.students;
+      if (!s) continue;
+      if (!studentMap.has(s.id)) {
+        studentMap.set(s.id, { ...s, week_xp: 0 });
+      }
+      studentMap.get(s.id).week_xp += sub.xp_earned || 0;
+    }
+
+    const ranked = [...studentMap.values()]
+      .sort((a, b) => b.week_xp - a.week_xp)
+      .map((s, index) => ({
+        rank: index + 1,
+        display_name: s.display_name,
+        avatar_seed: s.avatar_seed,
+        level: s.level,
+        course: s.course,
+        xp_earned: s.week_xp,
+        ...(s.show_real_name ? { first_name: s.first_name, last_name: s.last_name } : {}),
+      }));
 
     return res.json({
       success: true,
       leaderboard: ranked,
-      challenge: { id: latestChallenge.id, title: latestChallenge.title, week_number: latestChallenge.week_number },
+      week: requestedWeek,
+      availableWeeks,
+      challengeCount: challengeIds.length,
     });
   } catch (err) {
     console.error('[LEADERBOARD] Weekly error:', err.message);

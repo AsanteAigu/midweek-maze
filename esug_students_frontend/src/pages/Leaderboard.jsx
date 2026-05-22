@@ -41,10 +41,13 @@ export default function Leaderboard() {
   const [courseFilter, setCourseFilter] = useState('');
   const [levelFilter, setLevelFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [selectedWeek, setSelectedWeek] = useState(null); // null = use API default (latest)
 
   const params = new URLSearchParams({ page, limit: 20 });
   if (courseFilter) params.set('course', courseFilter);
   if (levelFilter) params.set('level', levelFilter);
+
+  const weekParams = selectedWeek ? `?week=${selectedWeek}` : '';
 
   const { data: alltimeData, isLoading: alltimeLoading } = useQuery({
     queryKey: ['leaderboard-alltime', courseFilter, levelFilter, page],
@@ -54,10 +57,16 @@ export default function Leaderboard() {
   });
 
   const { data: weeklyData, isLoading: weeklyLoading } = useQuery({
-    queryKey: ['leaderboard-weekly'],
-    queryFn: () => apiClient.get('/api/leaderboard/weekly').then((r) => r.data),
+    queryKey: ['leaderboard-weekly', selectedWeek],
+    queryFn: () => apiClient.get(`/api/leaderboard/weekly${weekParams}`).then((r) => r.data),
     staleTime: 30_000,
     enabled: tab === 'weekly',
+    onSuccess: (data) => {
+      // On first load, sync selectedWeek to whatever the API picked
+      if (selectedWeek === null && data?.week != null) {
+        setSelectedWeek(data.week);
+      }
+    },
   });
 
   const isLoading = tab === 'alltime' ? alltimeLoading : weeklyLoading;
@@ -108,13 +117,49 @@ export default function Leaderboard() {
           </div>
         )}
 
-        {/* Weekly challenge label */}
-        {tab === 'weekly' && weeklyData?.challenge && (
+        {/* Week navigator */}
+        {tab === 'weekly' && weeklyData?.availableWeeks?.length > 0 && (() => {
+          const weeks = weeklyData.availableWeeks; // descending order from API
+          const currentIdx = weeks.indexOf(weeklyData.week);
+          const canPrev = currentIdx < weeks.length - 1; // older week exists
+          const canNext = currentIdx > 0;               // newer week exists
+          return (
+            <div className="mb-4 flex items-center gap-2">
+              <button
+                onClick={() => setSelectedWeek(weeks[currentIdx + 1])}
+                disabled={!canPrev}
+                className="btn-secondary px-3 py-2 flex items-center gap-1 disabled:opacity-30"
+              >
+                <Icon.ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <div className="flex-1 card flex items-center gap-3 py-3">
+                <Icon.Lightning className="w-5 h-5 text-duo-blue flex-shrink-0" />
+                <div>
+                  <p className="font-display font-bold text-sm text-text-dark">
+                    Week {weeklyData.week} — Cumulative XP
+                  </p>
+                  <p className="font-body text-xs text-text-muted">
+                    {weeklyData.challengeCount} challenge{weeklyData.challengeCount !== 1 ? 's' : ''} scored this week
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedWeek(weeks[currentIdx - 1])}
+                disabled={!canNext}
+                className="btn-secondary px-3 py-2 flex items-center gap-1 disabled:opacity-30"
+              >
+                <Icon.ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          );
+        })()}
+
+        {tab === 'weekly' && !weeklyLoading && weeklyData?.availableWeeks?.length === 0 && (
           <div className="card mb-4 flex items-center gap-3">
-            <Icon.Lightning className="w-5 h-5 text-duo-blue flex-shrink-0" />
-            <p className="font-display font-bold text-sm text-text-dark">
-              Results for: Week {weeklyData.challenge.week_number} — {weeklyData.challenge.title}
-            </p>
+            <Icon.Lightning className="w-5 h-5 text-text-muted flex-shrink-0" />
+            <p className="font-display font-bold text-sm text-text-muted">No scored weeks yet</p>
           </div>
         )}
 
