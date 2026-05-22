@@ -79,14 +79,15 @@ async function scoreChallenge(specificChallengeId = null) {
   try {
     let challengeQuery = supabase
       .from('challenges')
-      .select('id, title, week_number, answer_key, xp_reward, partial_xp, has_questions')
-      .eq('is_scored', false);
+      .select('id, title, week_number, answer_key, xp_reward, partial_xp, has_questions');
 
     if (specificChallengeId) {
+      // Manual score: target this challenge regardless of is_scored state
       challengeQuery = challengeQuery.eq('id', specificChallengeId);
     } else {
+      // Scheduled score: only pick up unscored challenges that have closed
       const now = new Date().toISOString();
-      challengeQuery = challengeQuery.lt('closes_at', now).eq('is_active', false);
+      challengeQuery = challengeQuery.eq('is_scored', false).lt('closes_at', now).eq('is_active', false);
     }
 
     const { data: challengesToScore, error: challengeError } = await challengeQuery;

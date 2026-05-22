@@ -811,12 +811,10 @@ function ChallengeRow({ challenge, adminSecret, onAction }) {
                         : <><Icon.Play className="w-4 h-4" /> Activate</>
                       }
                     </button>
-                    {!challenge.is_scored && (
-                      <button onClick={handleManualScore} className="flex items-center gap-1.5 bg-duo-purple text-white font-display font-bold text-sm px-3 py-2 rounded-xl hover:opacity-90 transition-opacity">
-                        <Icon.Target className="w-4 h-4" />
-                        Score Now
-                      </button>
-                    )}
+                    <button onClick={handleManualScore} className="flex items-center gap-1.5 bg-duo-purple text-white font-display font-bold text-sm px-3 py-2 rounded-xl hover:opacity-90 transition-opacity">
+                      <Icon.Target className="w-4 h-4" />
+                      Score Now
+                    </button>
                     <button onClick={handleDelete} className="flex items-center gap-1.5 bg-duo-red text-white font-display font-bold text-sm px-3 py-2 rounded-xl hover:opacity-90 transition-opacity ml-auto">
                       <Icon.Trash className="w-4 h-4" />
                       Delete
