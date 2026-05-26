@@ -992,7 +992,7 @@ const DIFF_BADGE = {
   Extreme: 'bg-gray-100 text-gray-600',
 };
 
-const emptyMazeForm = { opens_at: '', closes_at: '', week_number: '', xp_reward: '' };
+const emptyMazeForm = { opens_at: '', closes_at: '', week_number: '', xp_reward: '', time_limit_minutes: '10' };
 
 function PublishGameForm({ game, adminSecret, onSuccess, onCancel }) {
   const [form, setForm] = useState({ ...emptyMazeForm, xp_reward: String(game.xp) });
@@ -1022,6 +1022,7 @@ function PublishGameForm({ game, adminSecret, onSuccess, onCancel }) {
           closes_at: new Date(form.closes_at).toISOString(),
           xp_reward: parseInt(form.xp_reward) || game.xp,
           partial_xp: 0,
+          time_limit_seconds: parseInt(form.time_limit_minutes || '10') * 60,
         },
         headers: { 'x-admin-secret': adminSecret },
       });
@@ -1074,6 +1075,12 @@ function PublishGameForm({ game, adminSecret, onSuccess, onCancel }) {
         <div>
           <label className="block text-xs font-display font-bold text-text-mid mb-1">XP Reward</label>
           <input type="number" min="1" value={form.xp_reward} onChange={(e) => set('xp_reward', e.target.value)} className="input text-xs" />
+        </div>
+        <div className="col-span-2">
+          <label className="block text-xs font-display font-bold text-text-mid mb-1">
+            XP Decay Time (minutes) — XP drops 10% per minute, hits 0 at this limit
+          </label>
+          <input type="number" min="1" max="60" value={form.time_limit_minutes} onChange={(e) => set('time_limit_minutes', e.target.value)} placeholder="10" className="input text-xs" />
         </div>
       </div>
       <div className="flex gap-2">

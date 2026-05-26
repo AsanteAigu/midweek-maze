@@ -11,6 +11,47 @@ import Icon from '../components/Icons';
 import apiClient from '../utils/axiosClient';
 
 
+// ── Maze elapsed timer (counts up from when student opens the challenge) ──────
+function useMazeTimer(challengeId, active) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!challengeId || !active) return;
+    const key = `maze_start_${challengeId}`;
+    if (!localStorage.getItem(key)) localStorage.setItem(key, String(Date.now()));
+    function calc() { return Math.floor((Date.now() - parseInt(localStorage.getItem(key) || '0', 10)) / 1000); }
+    setElapsed(calc());
+    const id = setInterval(() => setElapsed(calc()), 1000);
+    return () => clearInterval(id);
+  }, [challengeId, active]);
+  return elapsed;
+}
+
+// ── XP available display for maze challenges ───────────────────────────────────
+function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds }) {
+  const limitMins = (timeLimitSeconds || 600) / 60;
+  const xpPerMin = xpReward / limitMins;
+  const elapsedMins = Math.floor(elapsedSeconds / 60);
+  const xpNow = Math.max(0, Math.floor(xpReward - elapsedMins * xpPerMin));
+  const pct = xpNow / xpReward;
+  const mins = Math.floor(elapsedSeconds / 60);
+  const secs = elapsedSeconds % 60;
+  const color = pct > 0.5 ? 'text-duo-blue border-duo-blue/30 bg-duo-blue/10'
+    : pct > 0.2 ? 'text-yellow-600 border-yellow-300 bg-yellow-50'
+    : 'text-duo-red border-duo-red/30 bg-duo-red/10';
+  return (
+    <div className={`flex items-center gap-3 p-3 rounded-2xl border-2 mb-6 ${color}`}>
+      <Icon.Zap className="w-5 h-5 flex-shrink-0" />
+      <div className="flex-1">
+        <span className="font-display font-black text-lg">{xpNow} XP</span>
+        <span className="font-body text-xs text-text-muted ml-1.5">available — solve faster for more</span>
+      </div>
+      <span className="font-mono text-xs text-text-muted flex-shrink-0">
+        {String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')}
+      </span>
+    </div>
+  );
+}
+
 // ── Challenge image (top of page) ──────────────────────────────────────────────
 function ChallengeImage({ url }) {
   if (!url) return null;
@@ -456,9 +497,15 @@ export default function Challenge() {
 
   const submitMutation = useMutation({
     mutationFn: (payload) => apiClient.post('/api/submit', payload),
-    onSuccess: () => {
-      toast.success('Answer submitted — results drop Wednesday at midnight');
-      queryClient.invalidateQueries({ queryKey: ['current-challenge'] });
+    onSuccess: (response) => {
+      const data = response?.data;
+      const xpEarned = data?.submission?.xp_earned;
+      if (xpEarned !== undefined) {
+        toast.success(xpEarned > 0 ? `${xpEarned} XP earned!` : 'Submitted — no XP this time');
+      } else {
+        toast.success('Answer submitted — results drop Wednesday at midnight');
+      }
+      queryClient.invalidateQueries({ queryKey: ['challenge', challengeId || 'current'] });
       setShowModal(false);
     },
     onError: (err) => {
@@ -481,15 +528,59 @@ export default function Challenge() {
     }
   }, [answer, challenge, submission]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // For non-maze challenges: existing countdown timer (time limit forces submission)
   const secsLeft = useCountdown(
-    challenge?.id,
+    challenge?.challenge_type !== 'midweek_maze' ? challenge?.id : null,
     !submission ? (challenge?.time_limit_seconds || null) : null,
     handleTimerExpire,
   );
 
+  // For maze: elapsed timer (counts up) — only active when no submission yet
+  const mazeElapsed = useMazeTimer(
+    challenge?.challenge_type === 'midweek_maze' ? challenge?.id : null,
+    !submission,
+  );
+
+  // Calculate current XP available for maze
+  function calcMazeXp() {
+    if (!challenge) return 0;
+    const limitMins = (challenge.time_limit_seconds || 600) / 60;
+    const xpPerMin = challenge.xp_reward / limitMins;
+    const elapsedMins = Math.floor(mazeElapsed / 60);
+    return Math.max(0, Math.floor(challenge.xp_reward - elapsedMins * xpPerMin));
+  }
+
+  // Store elapsed in ref so postMessage handler always gets fresh value
+  const mazeElapsedRef = useRef(0);
+  useEffect(() => { mazeElapsedRef.current = mazeElapsed; }, [mazeElapsed]);
+
+  // Listen for MAZE_COMPLETE postMessage from the game iframe
+  useEffect(() => {
+    if (!challenge || challenge.challenge_type !== 'midweek_maze' || submission) return;
+    function handleMsg(event) {
+      if (event.data?.type !== 'MAZE_COMPLETE') return;
+      if (autoSubmitRef.current || submission) return;
+      autoSubmitRef.current = true;
+      const limitMins = (challenge.time_limit_seconds || 600) / 60;
+      const xpPerMin = challenge.xp_reward / limitMins;
+      const elapsedMins = Math.floor(mazeElapsedRef.current / 60);
+      const xpEarned = Math.max(0, Math.floor(challenge.xp_reward - elapsedMins * xpPerMin));
+      submitMutation.mutate({
+        challenge_id: challenge.id,
+        answer: challenge.game_slug || 'completed',
+        xp_earned: xpEarned,
+      });
+    }
+    window.addEventListener('message', handleMsg);
+    return () => window.removeEventListener('message', handleMsg);
+  }, [challenge, submission]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function getPreview() {
     if (!challenge) return '';
-    if (challenge.challenge_type === 'midweek_maze') return 'I completed the game and I am claiming my XP!';
+    if (challenge.challenge_type === 'midweek_maze') {
+      const xp = calcMazeXp();
+      return xp > 0 ? `Claim ${xp} XP for completing this maze` : 'Claim completion (0 XP — time limit passed)';
+    }
     if (!answer) return '';
     return formatAnswerLabel(answer, challenge);
   }
@@ -504,10 +595,15 @@ export default function Challenge() {
   }
 
   function handleConfirmSubmit() {
-    const finalAnswer = challenge.challenge_type === 'midweek_maze'
-      ? (challenge.game_slug || 'completed')
-      : answer.trim();
-    submitMutation.mutate({ challenge_id: challenge.id, answer: finalAnswer });
+    if (challenge.challenge_type === 'midweek_maze') {
+      submitMutation.mutate({
+        challenge_id: challenge.id,
+        answer: challenge.game_slug || 'completed',
+        xp_earned: calcMazeXp(),
+      });
+    } else {
+      submitMutation.mutate({ challenge_id: challenge.id, answer: answer.trim() });
+    }
   }
 
   const typeLabel = { quiz: 'Quiz', puzzle: 'Puzzle', problem: 'Engineering Problem', midweek_maze: 'Midweek Maze' };
@@ -583,6 +679,17 @@ export default function Challenge() {
                 </span>
               </p>
             </motion.div>
+
+            {/* Midweek Maze — XP decay timer */}
+            {challenge.challenge_type === 'midweek_maze' && !submission && (
+              <motion.div {...pageTransition}>
+                <MazeXpDisplay
+                  xpReward={challenge.xp_reward}
+                  timeLimitSeconds={challenge.time_limit_seconds}
+                  elapsedSeconds={mazeElapsed}
+                />
+              </motion.div>
+            )}
 
             {/* Midweek Maze — game iframe */}
             {challenge.challenge_type === 'midweek_maze' && challenge.game_slug && (

@@ -3,7 +3,7 @@ const { compareAnswers, scoreAllQuestions } = require('../utils/scoring');
 
 async function submit(req, res) {
   try {
-    const { challenge_id, answer } = req.body;
+    const { challenge_id, answer, xp_earned: clientXpEarned } = req.body;
     const studentId = req.userId;
     const now = new Date().toISOString();
 
@@ -105,7 +105,55 @@ async function submit(req, res) {
       });
     }
 
-    // ── 5. Insert submission ───────────────────────────────────────────────
+    // ── 5a. Midweek Maze — award XP immediately based on time ─────────────
+    if (challenge.challenge_type === 'midweek_maze') {
+      // Clamp client-sent XP to [0, xp_reward]
+      const earnedXp = Math.min(
+        challenge.xp_reward || 0,
+        Math.max(0, parseInt(clientXpEarned) || 0),
+      );
+
+      const { data: submission, error: insertError } = await supabase
+        .from('submissions')
+        .insert({
+          student_id: studentId,
+          challenge_id,
+          answer: answerToStore,
+          is_correct: earnedXp > 0,
+          xp_earned: earnedXp,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        if (insertError.code === '23505') {
+          return res.status(409).json({ error: true, message: "You've already submitted an answer for this challenge — one submission only", code: 409 });
+        }
+        throw insertError;
+      }
+
+      if (earnedXp > 0) {
+        await supabase.from('xp_history').insert({
+          student_id: studentId,
+          challenge_id,
+          xp_earned: earnedXp,
+          reason: `Midweek Maze — ${challenge.title}`,
+        });
+        const { error: rpcErr } = await supabase.rpc('increment_xp', { student_uuid: studentId, xp_amount: earnedXp });
+        if (rpcErr) {
+          const { data: student } = await supabase.from('students').select('total_xp').eq('id', studentId).single();
+          if (student) await supabase.from('students').update({ total_xp: (student.total_xp || 0) + earnedXp }).eq('id', studentId);
+        }
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: earnedXp > 0 ? `${earnedXp} XP earned!` : 'Submitted — better luck next time',
+        submission: { id: submission.id, submitted_at: submission.submitted_at, is_correct: earnedXp > 0, xp_earned: earnedXp },
+      });
+    }
+
+    // ── 5b. Standard challenge — insert unscored submission ────────────────
     const { data: submission, error: insertError } = await supabase
       .from('submissions')
       .insert({
