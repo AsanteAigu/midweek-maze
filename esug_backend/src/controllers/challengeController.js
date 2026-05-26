@@ -44,6 +44,8 @@ function safeChallenge(challenge, questions = []) {
     questions: questions.map(safeQuestion),
     time_limit_seconds: challenge.time_limit_seconds || null,
     created_at: challenge.created_at,
+    // game_slug is only exposed for midweek_maze — it's the game slug, not a secret answer
+    ...(challenge.challenge_type === 'midweek_maze' && { game_slug: challenge.answer_key || null }),
   };
 }
 

@@ -47,6 +47,7 @@ export default function Dashboard() {
     quiz: <Icon.ClipboardList className="w-7 h-7 text-duo-blue" />,
     puzzle: <Icon.Target className="w-7 h-7 text-duo-purple" />,
     problem: <Icon.Wrench className="w-7 h-7 text-duo-orange" />,
+    midweek_maze: <Icon.Dice className="w-7 h-7 text-duo-red" />,
   };
 
   return (
@@ -133,9 +134,14 @@ export default function Dashboard() {
                         </div>
                       </div>
                     ) : (
-                      <Link to={`/challenge?id=${challenge.id}`} className="btn-primary flex items-center justify-center gap-2 py-3">
-                        <Icon.Lightning className="w-5 h-5" />
-                        Go to Challenge
+                      <Link
+                        to={`/challenge?id=${challenge.id}`}
+                        className="btn-primary flex items-center justify-center gap-2 py-3"
+                      >
+                        {challenge.challenge_type === 'midweek_maze'
+                          ? <><Icon.Play className="w-5 h-5" /> Play Now</>
+                          : <><Icon.Lightning className="w-5 h-5" /> Go to Challenge</>
+                        }
                       </Link>
                     )}
                   </div>

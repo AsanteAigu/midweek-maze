@@ -488,7 +488,9 @@ export default function Challenge() {
   );
 
   function getPreview() {
-    if (!answer || !challenge) return '';
+    if (!challenge) return '';
+    if (challenge.challenge_type === 'midweek_maze') return 'I completed the game and I am claiming my XP!';
+    if (!answer) return '';
     return formatAnswerLabel(answer, challenge);
   }
 
@@ -502,14 +504,18 @@ export default function Challenge() {
   }
 
   function handleConfirmSubmit() {
-    submitMutation.mutate({ challenge_id: challenge.id, answer: answer.trim() });
+    const finalAnswer = challenge.challenge_type === 'midweek_maze'
+      ? (challenge.game_slug || 'completed')
+      : answer.trim();
+    submitMutation.mutate({ challenge_id: challenge.id, answer: finalAnswer });
   }
 
-  const typeLabel = { quiz: 'Quiz', puzzle: 'Puzzle', problem: 'Engineering Problem' };
+  const typeLabel = { quiz: 'Quiz', puzzle: 'Puzzle', problem: 'Engineering Problem', midweek_maze: 'Midweek Maze' };
   const typeIcon = {
     quiz: <Icon.ClipboardList className="w-5 h-5" />,
     puzzle: <Icon.Target className="w-5 h-5" />,
     problem: <Icon.Wrench className="w-5 h-5" />,
+    midweek_maze: <Icon.Dice className="w-5 h-5" />,
   };
 
   return (
@@ -578,27 +584,47 @@ export default function Challenge() {
               </p>
             </motion.div>
 
-            {/* Challenge image */}
-            {challenge.image_url && <ChallengeImage url={challenge.image_url} />}
-
-            {/* Description */}
-            <motion.div {...pageTransition} className="card mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Icon.ClipboardList className="w-5 h-5 text-duo-blue" />
-                <h2 className="font-display font-black text-lg text-text-dark">Challenge Description</h2>
-              </div>
-              <div className="font-body text-text-dark leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
-                {challenge.description}
-              </div>
-              {challenge.hint && (
-                <div className="mt-4 p-3 rounded-2xl bg-duo-yellow/10 border-2 border-duo-yellow/30 flex gap-2">
-                  <Icon.Info className="w-5 h-5 text-duo-yellow-dark flex-shrink-0 mt-0.5" />
-                  <p className="font-display font-bold text-sm text-text-dark">
-                    Hint: <span className="font-normal">{challenge.hint}</span>
-                  </p>
+            {/* Midweek Maze — game iframe */}
+            {challenge.challenge_type === 'midweek_maze' && challenge.game_slug && (
+              <motion.div {...pageTransition} className="card mb-6 p-0 overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-3 bg-surface-off border-b border-surface-border">
+                  <Icon.Dice className="w-4 h-4 text-duo-red" />
+                  <span className="font-display font-bold text-sm text-text-dark">Interactive Game</span>
+                  <span className="ml-auto font-mono text-xs text-text-muted">{challenge.game_slug}</span>
                 </div>
-              )}
-            </motion.div>
+                <iframe
+                  src={`${import.meta.env.VITE_API_URL}/games/${challenge.game_slug}/`}
+                  title={challenge.title}
+                  className="w-full border-0 block"
+                  style={{ height: '600px' }}
+                  allow="fullscreen"
+                />
+              </motion.div>
+            )}
+
+            {/* Challenge image */}
+            {challenge.challenge_type !== 'midweek_maze' && challenge.image_url && <ChallengeImage url={challenge.image_url} />}
+
+            {/* Description — hidden for midweek_maze (game is self-explanatory) */}
+            {challenge.challenge_type !== 'midweek_maze' && (
+              <motion.div {...pageTransition} className="card mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon.ClipboardList className="w-5 h-5 text-duo-blue" />
+                  <h2 className="font-display font-black text-lg text-text-dark">Challenge Description</h2>
+                </div>
+                <div className="font-body text-text-dark leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
+                  {challenge.description}
+                </div>
+                {challenge.hint && (
+                  <div className="mt-4 p-3 rounded-2xl bg-duo-yellow/10 border-2 border-duo-yellow/30 flex gap-2">
+                    <Icon.Info className="w-5 h-5 text-duo-yellow-dark flex-shrink-0 mt-0.5" />
+                    <p className="font-display font-bold text-sm text-text-dark">
+                      Hint: <span className="font-normal">{challenge.hint}</span>
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
 
             {/* Answer section */}
             <motion.div {...pageTransition}>
@@ -610,6 +636,29 @@ export default function Challenge() {
                   <h2 className="font-display font-black text-xl text-text-dark mb-2">Time's Up!</h2>
                   <p className="font-body text-text-mid text-sm">Your time limit expired. {submitMutation.isPending ? 'Submitting your last answer...' : 'No answer was submitted.'}</p>
                 </motion.div>
+              ) : challenge.challenge_type === 'midweek_maze' ? (
+                // ── Midweek Maze completion button ─────────────────────────
+                <div className="card">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Icon.Check className="w-5 h-5 text-duo-blue" />
+                    <h2 className="font-display font-black text-lg text-text-dark">Complete the Challenge</h2>
+                  </div>
+                  <p className="font-body text-text-mid text-sm mb-4">
+                    Play the game above, then click the button below to claim your XP!
+                  </p>
+                  <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
+                    <Icon.Warning className="w-3.5 h-3.5" />
+                    One submission only — mark complete only when you're done
+                  </div>
+                  <button
+                    onClick={() => setShowModal(true)}
+                    disabled={submitMutation.isPending}
+                    className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    <Icon.Check className="w-5 h-5" />
+                    Mark as Completed
+                  </button>
+                </div>
               ) : (
                 // ── Single-question form (all 8 types) ─────────────────────
                 <form onSubmit={handleSubmitAttempt} className="card">

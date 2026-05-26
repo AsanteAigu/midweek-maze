@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -50,6 +51,21 @@ app.use(generalLimiter);
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Interactive game static files — served at /games/:slug/
+// These are built Vite apps from interactive_games/{slug}/dist/
+// X-Frame-Options and CSP removed so the student frontend can embed them in iframes
+app.use('/games', (req, res, next) => {
+  res.removeHeader('X-Frame-Options');
+  res.removeHeader('Content-Security-Policy');
+  next();
+});
+app.use('/games/:slug', (req, res, next) => {
+  const { slug } = req.params;
+  if (!/^[a-z0-9-]+$/.test(slug)) return res.status(404).end();
+  const distDir = path.join(__dirname, '..', 'interactive_games', slug, 'dist');
+  return express.static(distDir)(req, res, next);
 });
 
 // Routes

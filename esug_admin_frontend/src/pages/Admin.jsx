@@ -1008,7 +1008,7 @@ function PublishGameForm({ game, adminSecret, onSuccess, onCancel }) {
     }
     setLoading(true);
     try {
-      await apiClient({
+      const { data: createData } = await apiClient({
         method: 'post',
         url: '/api/admin/challenges',
         data: {
@@ -1025,7 +1025,16 @@ function PublishGameForm({ game, adminSecret, onSuccess, onCancel }) {
         },
         headers: { 'x-admin-secret': adminSecret },
       });
-      toast.success(`${game.name} published!`);
+      // Auto-activate immediately so the challenge shows to students right away
+      if (createData?.challenge?.id) {
+        await apiClient({
+          method: 'patch',
+          url: `/api/admin/challenges/${createData.challenge.id}`,
+          data: { is_active: true },
+          headers: { 'x-admin-secret': adminSecret },
+        });
+      }
+      toast.success(`${game.name} published and activated!`);
       onSuccess();
     } catch (err) {
       toast.error(err.message);

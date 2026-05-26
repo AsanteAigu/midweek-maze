@@ -2,28 +2,39 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ── Puzzles ────────────────────────────────────────────────────────────────────
-// Unique twist: live arithmetic preview shows the equation updating as digits
-// are assigned. A "constraint dashboard" shows which rules are satisfied.
+// 3 classic cryptarithmetic puzzles, increasing difficulty.
+// All solutions verified. Tries reduced to 2. Letter hints removed.
+// Feedback on wrong answer says only "Incorrect — check your algebra."
 const PUZZLES = [
   {
     // SEND + MORE = MONEY
-    // S=9,E=5,N=6,D=7,M=1,O=0,R=8,Y=2  → 9567+1085=10652
+    // S=9,E=5,N=6,D=7,M=1,O=0,R=8,Y=2  →  9567 + 1085 = 10652
     words:    ['SEND', 'MORE', 'MONEY'],
     operator: '+',
-    letters:  ['D','E','M','N','O','R','S','Y'],
-    solution: { S:9, E:5, N:6, D:7, M:1, O:0, R:8, Y:2 },
-    noLeading: ['S','M'],   // S≠0, M≠0
-    hint: 'M=1 (the carry from thousands column)',
+    letters:  ['D', 'E', 'M', 'N', 'O', 'R', 'S', 'Y'],
+    solution: { S: 9, E: 5, N: 6, D: 7, M: 1, O: 0, R: 8, Y: 2 },
+    noLeading: ['S', 'M'],
+    hint: 'M must be 1 — it is the carry digit from the thousands column.',
   },
   {
-    // TWO + TWO = FOUR
-    // T=7,W=3,O=4,F=1,U=6,R=8  → 734+734=1468
-    words:    ['TWO', 'TWO', 'FOUR'],
+    // BASE + BALL = GAMES
+    // B=7,A=4,S=8,E=3,L=5,G=1,M=9  →  7483 + 7455 = 14938
+    words:    ['BASE', 'BALL', 'GAMES'],
     operator: '+',
-    letters:  ['F','O','R','T','U','W'],
-    solution: { T:7, W:3, O:4, F:1, U:6, R:8 },
-    noLeading: ['T','F'],
-    hint: 'F=1 (the overflow carry — FOUR has 4 digits, TWO has 3)',
+    letters:  ['A', 'B', 'E', 'G', 'L', 'M', 'S'],
+    solution: { B: 7, A: 4, S: 8, E: 3, L: 5, G: 1, M: 9 },
+    noLeading: ['B', 'G'],
+    hint: 'G must be 1 — the result has 5 digits while each addend has 4.',
+  },
+  {
+    // ODD + ODD = EVEN
+    // O=6,D=5,E=1,V=3,N=0  →  655 + 655 = 1310
+    words:    ['ODD', 'ODD', 'EVEN'],
+    operator: '+',
+    letters:  ['D', 'E', 'N', 'O', 'V'],
+    solution: { O: 6, D: 5, E: 1, V: 3, N: 0 },
+    noLeading: ['O', 'E'],
+    hint: 'E must be 1 — EVEN has 4 digits and ODD has 3, so E is the carry.',
   },
 ];
 
@@ -46,7 +57,7 @@ function DigitPicker({ letter, value, usedDigits, noLeading, onChange }) {
         {letter}
       </div>
       <div className="grid grid-cols-5 gap-0.5">
-        {[0,1,2,3,4,5,6,7,8,9].map(d => {
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => {
           const isAssigned = value === d;
           const isUsed     = usedDigits.includes(d) && !isAssigned;
           const isBlocked  = noLeading && d === 0;
@@ -66,9 +77,11 @@ function DigitPicker({ letter, value, usedDigits, noLeading, onChange }) {
         })}
       </div>
       <div className="w-10 h-7 rounded-xl border-2 flex items-center justify-center font-mono font-bold text-base"
-        style={{ borderColor: value !== null ? '#1CB0F6' : '#E5E5E5',
-                 backgroundColor: value !== null ? '#DFF4FF' : '#F7F7F7',
-                 color: value !== null ? '#0F8FC0' : '#AFAFAF' }}>
+        style={{
+          borderColor: value !== null ? '#1CB0F6' : '#E5E5E5',
+          backgroundColor: value !== null ? '#DFF4FF' : '#F7F7F7',
+          color: value !== null ? '#0F8FC0' : '#AFAFAF',
+        }}>
         {value ?? '?'}
       </div>
     </div>
@@ -82,7 +95,7 @@ function EquationDisplay({ puzzle, assigns }) {
   const computed = a !== null && b !== null ? a + b : null;
   const matches  = computed !== null && c !== null && computed === c;
 
-  function renderWord(word, num) {
+  function renderWord(word) {
     return (
       <div className="text-right">
         <div className="font-mono font-black text-2xl text-text-dark tracking-widest">
@@ -94,7 +107,7 @@ function EquationDisplay({ puzzle, assigns }) {
           ))}
         </div>
         <div className="font-mono text-xs text-text-muted tracking-widest">
-          {word.split('').map((ch,i) => <span key={i} className="inline-block w-7 text-center">{ch}</span>)}
+          {word.split('').map((ch, i) => <span key={i} className="inline-block w-7 text-center">{ch}</span>)}
         </div>
       </div>
     );
@@ -102,18 +115,18 @@ function EquationDisplay({ puzzle, assigns }) {
 
   return (
     <div className="font-mono text-right space-y-2 p-4 bg-surface-off rounded-2xl border border-surface-border">
-      {renderWord(puzzle.words[0], nums[0])}
+      {renderWord(puzzle.words[0])}
       <div className="flex items-center justify-end gap-2">
         <span className="font-display font-black text-2xl text-text-muted">{puzzle.operator}</span>
-        {renderWord(puzzle.words[1], nums[1])}
+        {renderWord(puzzle.words[1])}
       </div>
       <div className="border-t-2 border-text-dark pt-2">
-        {renderWord(puzzle.words[2], nums[2])}
+        {renderWord(puzzle.words[2])}
       </div>
       {computed !== null && (
         <div className={`text-center text-sm font-display font-bold rounded-xl px-3 py-1
           ${matches ? 'text-duo-green-dark bg-duo-green/10' : 'text-duo-red bg-duo-red/8'}`}>
-          {computed} {puzzle.operator} computed  {matches ? '= ✓ Matches!' : `≠ ${c ?? '?'}`}
+          {matches ? `${computed} = ${c} ✓ Matches!` : `Sum so far: ${computed}`}
         </div>
       )}
     </div>
@@ -122,19 +135,18 @@ function EquationDisplay({ puzzle, assigns }) {
 
 // ── App ────────────────────────────────────────────────────────────────────────
 export default function Cryptarithmetic() {
-  const [pIdx,     setPIdx]  = useState(0);
-  const [assigns,  setAssigns]= useState({});
-  const [triesLeft,setTries] = useState(MAX_TRIES);
-  const [score,    setScore] = useState(0);
-  const [phase,    setPhase] = useState('intro');
-  const [msg,      setMsg]   = useState('');
-  const [hintShown,setHint]  = useState(false);
+  const [pIdx,      setPIdx]   = useState(0);
+  const [assigns,   setAssigns] = useState({});
+  const [triesLeft, setTries]  = useState(MAX_TRIES);
+  const [score,     setScore]  = useState(0);
+  const [phase,     setPhase]  = useState('intro');
+  const [msg,       setMsg]    = useState('');
+  const [hintShown, setHint]   = useState(false);
 
   const puzzle = PUZZLES[pIdx];
 
-  // Which digits are already assigned to OTHER letters?
   const usedDigits = puzzle.letters
-    .filter(l => l !== undefined && assigns[l] !== null && assigns[l] !== undefined)
+    .filter(l => assigns[l] !== null && assigns[l] !== undefined)
     .map(l => assigns[l]);
 
   function setLetter(l, d) {
@@ -145,19 +157,16 @@ export default function Cryptarithmetic() {
   const allAssigned = puzzle.letters.every(l => assigns[l] !== null && assigns[l] !== undefined);
 
   function check() {
-    if (!allAssigned) { setMsg('Assign a digit to every letter first'); return; }
+    if (!allAssigned) { setMsg('Assign a digit to every letter first.'); return; }
 
-    // Check uniqueness
-    const vals = puzzle.letters.map(l => assigns[l]);
+    const vals   = puzzle.letters.map(l => assigns[l]);
     const unique = new Set(vals).size === vals.length;
-    if (!unique) { setMsg('All letters must map to different digits'); return; }
+    if (!unique) { setMsg('All letters must map to different digits.'); return; }
 
-    // Check no leading zeros
     for (const l of puzzle.noLeading) {
-      if (assigns[l] === 0) { setMsg(`${l} cannot be 0 (leading digit)`); return; }
+      if (assigns[l] === 0) { setMsg(`${l} cannot be 0 (leading digit).`); return; }
     }
 
-    // Check arithmetic
     const nums = puzzle.words.map(w => wordToNum(w, assigns));
     const [a, b, c] = nums;
     const correct = a + b === c;
@@ -165,16 +174,16 @@ export default function Cryptarithmetic() {
     if (correct) {
       const xp = hintShown ? 100 : 200;
       setScore(s => s + xp);
-      setMsg(`Correct!  +${xp} XP`);
+      setMsg(`Correct! +${xp} XP`);
       setTimeout(() => {
         if (pIdx >= PUZZLES.length - 1) setPhase('won');
-        else { setPIdx(i=>i+1); setAssigns({}); setMsg(''); setHint(false); }
+        else { setPIdx(i => i + 1); setAssigns({}); setMsg(''); setHint(false); setTries(MAX_TRIES); }
       }, 900);
     } else {
       const t = triesLeft - 1;
       setTries(t);
       if (t <= 0) setPhase('lost');
-      else setMsg(`${a} ${puzzle.operator} ${b} = ${a+b}, not ${c}. ${t} ${t===1?'try':'tries'} left`);
+      else setMsg(`Incorrect — check your algebra. ${t} ${t === 1 ? 'try' : 'tries'} left.`);
     }
   }
 
@@ -184,16 +193,20 @@ export default function Cryptarithmetic() {
   }
 
   function reset() {
-    setPIdx(0); setAssigns({}); setTries(MAX_TRIES);
-    setScore(0); setPhase('playing'); setMsg(''); setHint(false);
+    setPIdx(0);
+    setAssigns({});
+    setTries(MAX_TRIES);
+    setScore(0);
+    setPhase('playing');
+    setMsg('');
+    setHint(false);
   }
 
-  // Constraint status badges
   const assignedCount = puzzle.letters.filter(l => assigns[l] !== null && assigns[l] !== undefined).length;
   const unique        = new Set(usedDigits).size === usedDigits.length;
   const noLeadOk      = puzzle.noLeading.every(l => assigns[l] !== 0);
   const nums          = puzzle.words.map(w => wordToNum(w, assigns));
-  const sumOk         = nums[0] !== null && nums[1] !== null && nums[2] !== null && nums[0]+nums[1] === nums[2];
+  const sumOk         = nums[0] !== null && nums[1] !== null && nums[2] !== null && nums[0] + nums[1] === nums[2];
 
   return (
     <div className="min-h-screen bg-surface-off flex flex-col items-center py-8 px-4 font-body">
@@ -205,60 +218,60 @@ export default function Cryptarithmetic() {
         </p>
 
         <AnimatePresence mode="wait">
-          
+
           {phase === 'intro' && (
-            <motion.div key="intro" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}}
+            <motion.div key="intro" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               className="bg-surface-card rounded-3xl border border-surface-border shadow-card p-6">
               <h2 className="font-display font-black text-xl text-text-dark mb-3">How to Play — Cryptarithmetic</h2>
               <div className="space-y-3 mb-5">
                 <div className="flex gap-3 items-start bg-surface-off rounded-2xl p-3 border border-surface-border">
                   <span className="font-display font-black text-duo-blue text-lg leading-none mt-0.5">1</span>
-                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{__html: "A letter equation is shown (e.g. SEND + MORE = MONEY)."}}/>
+                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{ __html: "A letter equation is shown (e.g. SEND + MORE = MONEY)." }} />
                 </div>
                 <div className="flex gap-3 items-start bg-surface-off rounded-2xl p-3 border border-surface-border">
                   <span className="font-display font-black text-duo-blue text-lg leading-none mt-0.5">2</span>
-                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{__html: "Replace every letter with a unique digit 0–9 so the arithmetic is correct."}}/>
+                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{ __html: "Replace every letter with a unique digit 0–9 so the arithmetic is correct." }} />
                 </div>
                 <div className="flex gap-3 items-start bg-surface-off rounded-2xl p-3 border border-surface-border">
                   <span className="font-display font-black text-duo-blue text-lg leading-none mt-0.5">3</span>
-                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{__html: "Each letter maps to exactly one digit, and no two letters share the same digit."}}/>
+                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{ __html: "Each letter maps to exactly one digit, and no two letters share the same digit." }} />
                 </div>
                 <div className="flex gap-3 items-start bg-surface-off rounded-2xl p-3 border border-surface-border">
                   <span className="font-display font-black text-duo-blue text-lg leading-none mt-0.5">4</span>
-                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{__html: "No leading zeros: the first letter of any word cannot be 0."}}/>
+                  <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{ __html: "No leading zeros: the first letter of any word cannot be 0. You have <strong>2 tries</strong> per puzzle." }} />
                 </div>
               </div>
               <div className="bg-[#1CB0F6]/8 rounded-2xl p-4 mb-5 border border-[#1CB0F6]/20">
                 <p className="font-display font-black text-xs text-duo-blue uppercase tracking-wider mb-1">Example</p>
-                <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{__html: "TWO + TWO = FOUR → T=7, W=3, O=4, F=1, U=9, R=8 gives 734 + 734 = 1468. ✓"}}/>
+                <p className="font-body text-sm text-text-mid" dangerouslySetInnerHTML={{ __html: "ODD + ODD = EVEN → O=6, D=5, E=1, V=3, N=0 gives 655 + 655 = 1310 ✓" }} />
               </div>
               <button onClick={() => setPhase('playing')} className="btn-primary w-full py-3 text-base">Got it — Start Playing</button>
             </motion.div>
           )}
 
           {phase === 'won' && (
-            <motion.div key="won" initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
+            <motion.div key="won" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
               className="bg-surface-card rounded-3xl border border-surface-border shadow-card text-center p-8">
               <div className="w-20 h-20 bg-duo-green rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-[0_6px_24px_rgba(88,204,2,0.35)]">
                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                  <path d="m4.5 12.75 6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="m4.5 12.75 6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">Decoded!</h2>
               <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40 rounded-2xl px-5 py-2 mb-5">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
                 <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP earned</span>
               </div>
-              <button onClick={reset} className="btn-primary w-full py-3 text-base">Next Puzzle</button>
+              <button onClick={reset} className="btn-primary w-full py-3 text-base">Play Again</button>
             </motion.div>
           )}
 
           {phase === 'lost' && (
-            <motion.div key="lost" initial={{ opacity:0, scale:0.9 }} animate={{ opacity:1, scale:1 }}
+            <motion.div key="lost" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
               className="bg-surface-card rounded-3xl border border-surface-border shadow-card text-center p-8">
               <div className="w-20 h-20 bg-duo-red/10 rounded-3xl flex items-center justify-center mx-auto mb-4 border-2 border-duo-red/25">
                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#FF4B4B" strokeWidth="3">
-                  <path d="M6 18 18 6M6 6l12 12" strokeLinecap="round"/>
+                  <path d="M6 18 18 6M6 6l12 12" strokeLinecap="round" />
                 </svg>
               </div>
               <h2 className="font-display font-black text-2xl text-text-dark mb-3">No More Tries</h2>
@@ -277,18 +290,18 @@ export default function Cryptarithmetic() {
           )}
 
           {phase === 'playing' && (
-            <motion.div key={`p${pIdx}`} initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}>
+            <motion.div key={`p${pIdx}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
               {/* HUD */}
               <div className="flex items-center justify-between bg-surface-card rounded-2xl border border-surface-border shadow-card px-5 py-3 mb-4">
-                <span className="font-display font-bold text-xs text-text-muted">Puzzle {pIdx+1}/{PUZZLES.length}</span>
+                <span className="font-display font-bold text-xs text-text-muted">Puzzle {pIdx + 1}/{PUZZLES.length}</span>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5 bg-duo-yellow/15 rounded-xl px-3 py-1">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg>
                     <span className="font-mono font-bold text-sm text-duo-yellow-dark">{score} XP</span>
                   </div>
                   <div className="flex gap-1.5">
-                    {Array.from({length:MAX_TRIES}).map((_,i)=>(
-                      <div key={i} className="w-3 h-3 rounded-full" style={{background:i<triesLeft?'#1CB0F6':'#E5E5E5'}}/>
+                    {Array.from({ length: MAX_TRIES }).map((_, i) => (
+                      <div key={i} className="w-3 h-3 rounded-full" style={{ background: i < triesLeft ? '#1CB0F6' : '#E5E5E5' }} />
                     ))}
                   </div>
                 </div>
@@ -297,7 +310,7 @@ export default function Cryptarithmetic() {
               {/* Live equation */}
               <div className="bg-surface-card rounded-3xl border border-surface-border shadow-card p-5 mb-4">
                 <h2 className="font-display font-black text-lg text-text-dark mb-3">
-                  {puzzle.words.join(` ${puzzle.operator} `).replace(puzzle.words[2], `= ${puzzle.words[2]}`)}
+                  {puzzle.words[0]} {puzzle.operator} {puzzle.words[1]} = {puzzle.words[2]}
                 </h2>
                 <EquationDisplay puzzle={puzzle} assigns={assigns} />
               </div>
@@ -307,16 +320,16 @@ export default function Cryptarithmetic() {
                 <div className="flex gap-4 flex-wrap">
                   {[
                     { label: `${assignedCount}/${puzzle.letters.length} assigned`, ok: assignedCount === puzzle.letters.length },
-                    { label: 'All unique',     ok: unique && assignedCount > 1 },
-                    { label: 'No leading 0s',  ok: noLeadOk },
-                    { label: 'Sum correct',    ok: sumOk },
+                    { label: 'All unique',    ok: unique && assignedCount > 1 },
+                    { label: 'No leading 0s', ok: noLeadOk },
+                    { label: 'Sum correct',   ok: sumOk },
                   ].map(({ label, ok }) => (
                     <div key={label} className="flex items-center gap-1.5">
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center`}
+                      <div className="w-4 h-4 rounded-full flex items-center justify-center"
                         style={{ background: ok ? '#58CC02' : '#E5E5E5' }}>
                         {ok && (
                           <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2">
-                            <path d="M2 6l3 3 5-5" strokeLinecap="round"/>
+                            <path d="M2 6l3 3 5-5" strokeLinecap="round" />
                           </svg>
                         )}
                       </div>
@@ -344,7 +357,7 @@ export default function Cryptarithmetic() {
 
               <AnimatePresence>
                 {msg && (
-                  <motion.div initial={{opacity:0,y:-6}} animate={{opacity:1,y:0}} exit={{opacity:0}}
+                  <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                     className="bg-surface-card rounded-2xl border border-surface-border px-4 py-2.5 mb-4 text-center font-body text-sm text-text-mid">
                     {msg}
                   </motion.div>
@@ -356,7 +369,7 @@ export default function Cryptarithmetic() {
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all disabled:opacity-40">
                   Hint <span className="font-normal text-text-muted">(−100 XP)</span>
                 </button>
-                <button onClick={()=>{setAssigns({});setMsg('');}}
+                <button onClick={() => { setAssigns({}); setMsg(''); }}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-surface-border-strong transition-all">
                   Clear
                 </button>
@@ -364,8 +377,9 @@ export default function Cryptarithmetic() {
               <button onClick={check} disabled={!allAssigned}
                 className={[
                   'w-full py-4 rounded-2xl font-display font-black text-lg transition-all',
-                  allAssigned ? 'bg-duo-blue text-white shadow-blue hover:bg-duo-blue-dark cursor-pointer'
-                  : 'bg-surface-off border-2 border-surface-border text-text-muted cursor-not-allowed',
+                  allAssigned
+                    ? 'bg-duo-blue text-white shadow-blue hover:bg-duo-blue-dark cursor-pointer'
+                    : 'bg-surface-off border-2 border-surface-border text-text-muted cursor-not-allowed',
                 ].join(' ')}>
                 Verify Equation
               </button>
