@@ -268,8 +268,10 @@ export default function PolyhedralNets() {
       setScore(s => s + 250);
       setMsg('Correct net!');
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
-        else { setPIdx(i => i + 1); setSel(null); setFb(null); setMsg(''); }
+        if (pIdx >= PUZZLES.length - 1) {
+          setPhase('won');
+          window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
+        } else { setPIdx(i => i + 1); setSel(null); setFb(null); setMsg(''); }
       }, 900);
     } else {
       setFb('wrong');

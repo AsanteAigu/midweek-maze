@@ -181,8 +181,10 @@ export default function MathCross() {
       setMsg(`All equations balance! +${xp} XP`);
       setHints(0);
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
-        else {
+        if (pIdx >= PUZZLES.length - 1) {
+          setPhase('won');
+          window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
+        } else {
           setPIdx(i => i + 1);
           setGrid(initGrid(pIdx + 1));
           setSelBank(null);

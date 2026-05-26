@@ -143,6 +143,9 @@ export default function NumberMaze() {
 
     if (r === GRID_SIZE - 1 && c === GRID_SIZE - 1) {
       setPhase('won');
+      if (pIdx === PUZZLES.length - 1) {
+        window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
+      }
     } else {
       const nextMoves = getValidNeighbours(puzzle.grid, r, c, newVisited);
       if (nextMoves.length === 0) {
@@ -153,7 +156,7 @@ export default function NumberMaze() {
         setMsgErr(false);
       }
     }
-  }, [phase, puzzle, curPos, visited, path, moves, validMoves]);
+  }, [phase, puzzle, pIdx, curPos, visited, path, moves, validMoves]);
 
   function restartPuzzle() {
     setCurPos([0, 0]);

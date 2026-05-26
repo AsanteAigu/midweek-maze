@@ -176,8 +176,10 @@ export default function Cryptarithmetic() {
       setScore(s => s + xp);
       setMsg(`Correct! +${xp} XP`);
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
-        else { setPIdx(i => i + 1); setAssigns({}); setMsg(''); setHint(false); setTries(MAX_TRIES); }
+        if (pIdx >= PUZZLES.length - 1) {
+          setPhase('won');
+          window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
+        } else { setPIdx(i => i + 1); setAssigns({}); setMsg(''); setHint(false); setTries(MAX_TRIES); }
       }, 900);
     } else {
       const t = triesLeft - 1;
