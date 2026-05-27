@@ -27,7 +27,7 @@ export default function PangramBuilder() {
   const [round, setRound] = useState(0);
   const [text, setText] = useState('');
   const [tries, setTries] = useState(MAX_TRIES);
-  const [score, setScore] = useState(0);
+  const [setScore] = useState(0);
   const [phase, setPhase] = useState('playing');
   const [msg, setMsg] = useState('');
   const [hintShown, setHintShown] = useState(false);
@@ -55,7 +55,7 @@ export default function PangramBuilder() {
     const bonus = wc < r.target ? (r.target - wc) * 5 : 0;
     const xp = 150 + bonus;
     setScore(s => s + xp);
-    setMsg(`Pangram! +${xp} XP${bonus ? ` (+${bonus} efficiency bonus)` : ''}`);
+    setMsg(`Pangram!${bonus ? ` (+${bonus} efficiency bonus)` : ''}`);
     setTimeout(() => {
       if (round >= ROUNDS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
       else { setRound(i => i + 1); setText(''); setMsg(''); setTries(MAX_TRIES); setHintShown(false); }
@@ -82,10 +82,6 @@ export default function PangramBuilder() {
                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="m4.5 12.75 6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">Pangram Master!</h2>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40 rounded-2xl px-5 py-2 mb-5">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP</span>
-              </div>
               <button onClick={reset} className="btn-primary w-full py-3 text-base">Play Again</button>
             </motion.div>
           )}

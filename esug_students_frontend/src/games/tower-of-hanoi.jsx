@@ -154,7 +154,7 @@ export default function TowerOfHanoi() {
     const nextMove = OPTIMAL_PATH[moves];
     if (!nextMove) { showMsg('You\'re already at or past the optimal solution!', 'info'); return; }
     setHints(h => h + 1);
-    showMsg(`Hint: Move top disc from Peg ${nextMove.from} → Peg ${nextMove.to}  (−5 XP)`, 'info');
+    showMsg(`Hint: Move top disc from Peg ${nextMove.from} → Peg ${nextMove.to}`, 'info');
   }
 
   function restart() {
@@ -291,7 +291,7 @@ export default function TowerOfHanoi() {
                 <button onClick={giveHint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white
                     border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
-                  Hint  <span className="font-normal text-text-muted">(−5 XP)</span>
+                  Hint  <span className="font-normal text-text-muted"></span>
                 </button>
                 <button onClick={restart}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white

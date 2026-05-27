@@ -28,7 +28,7 @@ function useMazeTimer(challengeId, active) {
 }
 
 // ── XP available display for maze challenges ───────────────────────────────────
-function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds }) {
+function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds, compact = false }) {
   const limitMins = (timeLimitSeconds || 600) / 60;
   const xpPerMin = xpReward / limitMins;
   const elapsedMins = Math.floor(elapsedSeconds / 60);
@@ -36,6 +36,22 @@ function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds }) {
   const pct = xpNow / xpReward;
   const mins = Math.floor(elapsedSeconds / 60);
   const secs = elapsedSeconds % 60;
+  const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+  if (compact) {
+    const chipColor = pct > 0.5 ? 'text-duo-blue bg-duo-blue/10 border-duo-blue/30'
+      : pct > 0.2 ? 'text-yellow-600 bg-yellow-50 border-yellow-300'
+      : 'text-duo-red bg-duo-red/10 border-duo-red/30';
+    return (
+      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl border text-xs font-mono font-bold ${chipColor}`}>
+        <Icon.Zap className="w-3 h-3" />
+        <span>{xpNow} XP</span>
+        <span className="opacity-60">·</span>
+        <span>{timeStr}</span>
+      </div>
+    );
+  }
+
   const color = pct > 0.5 ? 'text-duo-blue border-duo-blue/30 bg-duo-blue/10'
     : pct > 0.2 ? 'text-yellow-600 border-yellow-300 bg-yellow-50'
     : 'text-duo-red border-duo-red/30 bg-duo-red/10';
@@ -46,9 +62,7 @@ function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds }) {
         <span className="font-display font-black text-lg">{xpNow} XP</span>
         <span className="font-body text-xs text-text-muted ml-1.5">available — solve faster for more</span>
       </div>
-      <span className="font-mono text-xs text-text-muted flex-shrink-0">
-        {String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')}
-      </span>
+      <span className="font-mono text-xs text-text-muted flex-shrink-0">{timeStr}</span>
     </div>
   );
 }
@@ -681,24 +695,26 @@ export default function Challenge() {
               </p>
             </motion.div>
 
-            {/* Midweek Maze — XP decay timer */}
-            {challenge.challenge_type === 'midweek_maze' && !submission && (
-              <motion.div {...pageTransition}>
-                <MazeXpDisplay
-                  xpReward={challenge.xp_reward}
-                  timeLimitSeconds={challenge.time_limit_seconds}
-                  elapsedSeconds={mazeElapsed}
-                />
-              </motion.div>
-            )}
-
-            {/* Midweek Maze — inline game component */}
+            {/* Midweek Maze — inline game component with sticky timer in header */}
             {challenge.challenge_type === 'midweek_maze' && challenge.game_slug && (
               <motion.div {...pageTransition} className="card mb-6 p-0 overflow-hidden">
+                {/* Header bar — game title + live timer */}
                 <div className="flex items-center gap-2 px-4 py-3 bg-surface-off border-b border-surface-border">
                   <Icon.Dice className="w-4 h-4 text-duo-red" />
                   <span className="font-display font-bold text-sm text-text-dark">Interactive Game</span>
-                  <span className="ml-auto font-mono text-xs text-text-muted">{challenge.game_slug}</span>
+                  {!submission && (
+                    <div className="ml-auto flex items-center gap-2">
+                      <MazeXpDisplay
+                        xpReward={challenge.xp_reward}
+                        timeLimitSeconds={challenge.time_limit_seconds}
+                        elapsedSeconds={mazeElapsed}
+                        compact
+                      />
+                    </div>
+                  )}
+                  {submission && (
+                    <span className="ml-auto font-mono text-xs text-duo-green font-bold">Submitted ✓</span>
+                  )}
                 </div>
                 <GameRenderer slug={challenge.game_slug} />
               </motion.div>

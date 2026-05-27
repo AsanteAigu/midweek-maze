@@ -36,7 +36,7 @@ export default function CombinatorialLock() {
   const [guesses, setGuesses] = useState([]);
   const [current, setCurrent] = useState(Array(CODE_LEN).fill(''));
   const [phase, setPhase] = useState('intro'); // playing | won | lost | roundWon
-  const [score, setScore] = useState(0);
+  const [setScore] = useState(0);
   const [msg, setMsg] = useState('');
 
   const currentCode = code[round - 1];
@@ -58,7 +58,7 @@ export default function CombinatorialLock() {
     if (fb.black === CODE_LEN) {
       const xp = 100 + guessesLeft * 20;
       setScore(s => s + xp);
-      setMsg(`Cracked! +${xp} XP`);
+      setMsg(`Cracked!`);
       setTimeout(() => {
         if (round >= totalRounds) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else setPhase('roundWon');
@@ -122,10 +122,6 @@ export default function CombinatorialLock() {
                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="m4.5 12.75 6 6 9-13.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">All Codes Cracked!</h2>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40 rounded-2xl px-5 py-2 mb-5">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP</span>
-              </div>
               <button onClick={reset} className="btn-primary w-full py-3 text-base">New Game</button>
             </motion.div>
           )}
@@ -145,10 +141,6 @@ export default function CombinatorialLock() {
               className="bg-surface-card rounded-3xl border border-surface-border shadow-card text-center p-8">
               <h2 className="font-display font-black text-2xl text-text-dark mb-2">Round {round} Cracked!</h2>
               <p className="text-text-mid text-sm mb-5">Next lock awaits...</p>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 rounded-2xl px-4 py-2 mb-5">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
-                <span className="font-mono font-bold text-sm text-duo-yellow-dark">{score} XP</span>
-              </div>
               <button onClick={nextRound} className="btn-primary w-full py-3">Round {round + 1}</button>
             </motion.div>
           )}

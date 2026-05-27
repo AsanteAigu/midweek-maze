@@ -76,7 +76,7 @@ export default function BridgesAndIslands() {
   const [bridges, setBridges] = useState(new Set()); // set of "A-B" keys (single bridge)
   const [pending, setPending] = useState(null);       // first island selected
   const [tries, setTries] = useState(MAX_TRIES);
-  const [score, setScore] = useState(0);
+  const [setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
   const [wrongBridges, setWrongBridges] = useState(new Set());
@@ -201,10 +201,6 @@ export default function BridgesAndIslands() {
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-1">All Connected!</h2>
               <p className="text-text-mid text-sm mb-3">Puzzle {pIdx + 1} solved.</p>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40 rounded-2xl px-5 py-2 mb-5">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP</span>
-              </div>
               {pIdx < PUZZLES.length - 1
                 ? <button onClick={nextPuzzle} className="btn-primary w-full py-3 text-base">Next Puzzle</button>
                 : <button onClick={reset} className="btn-primary w-full py-3 text-base">Play Again</button>

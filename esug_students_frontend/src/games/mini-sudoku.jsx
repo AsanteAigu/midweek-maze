@@ -97,7 +97,7 @@ export default function MiniSudoku() {
   const [grid,     setGrid]    = useState(() => buildGrid(0));
   const [selCell,  setSelCell] = useState(null); // [r,c] or null
   const [triesLeft,setTries]   = useState(MAX_TRIES);
-  const [score,    setScore]   = useState(0);
+  const [setScore]   = useState(0);
   const [hints,    setHints]   = useState(0);
   const [phase,    setPhase]   = useState('intro');
   const [msg,      setMsg]     = useState('');
@@ -147,7 +147,7 @@ export default function MiniSudoku() {
     if (correct) {
       const xp = Math.max(150 - hints * 20, 30);
       setScore(s => s + xp);
-      setMsg(`Correct!  +${xp} XP`);
+      setMsg(`Correct!`);
       setTimeout(() => {
         if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i => i + 1); setGrid(buildGrid(pIdx + 1)); setHints(0); setMsg(''); setSelCell(null); }
@@ -169,7 +169,7 @@ export default function MiniSudoku() {
           next[r][c] = solution[r][c];
           setGrid(next);
           setHints(h => h + 1);
-          setMsg(`Hint: placed ${solution[r][c]} at row ${r + 1}, col ${c + 1}  (−20 XP)`);
+          setMsg(`Hint: placed ${solution[r][c]} at row ${r + 1}, col ${c + 1}`);
           return;
         }
       }
@@ -237,13 +237,6 @@ export default function MiniSudoku() {
                 </svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">All Puzzles Solved!</h2>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40
-                rounded-2xl px-5 py-2 mb-4">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00">
-                  <path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
-                </svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP earned</span>
-              </div>
               <button onClick={restart} className="btn-primary w-full py-3 mt-4 text-base">Play Again</button>
             </motion.div>
           )}
@@ -367,7 +360,7 @@ export default function MiniSudoku() {
                 <button onClick={giveHint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white
                     border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
-                  Hint  <span className="font-normal text-text-muted">(−20 XP)</span>
+                  Hint  <span className="font-normal text-text-muted"></span>
                 </button>
                 <button onClick={() => { setGrid(buildGrid(pIdx)); setSelCell(null); setMsg(''); }}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white

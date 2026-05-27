@@ -92,7 +92,7 @@ export default function RubiksCube() {
   const sc = SCRAMBLES[scrambleIdx];
   const [state, setState] = useState(() => applyMoves(solvedState(), sc.moves));
   const [moves, setMoves] = useState(0);
-  const [score, setScore] = useState(0);
+  const [setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
 

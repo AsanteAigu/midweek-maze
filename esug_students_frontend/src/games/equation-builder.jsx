@@ -79,7 +79,7 @@ export default function EquationBuilder() {
   const [slots,    setSlots]    = useState(Array(6).fill(null));
   const [pickedTile, setPicked] = useState(null);   // index into shuffledPool
   const [triesLeft, setTries]   = useState(MAX_TRIES);
-  const [score,    setScore]    = useState(0);
+  const [setScore]    = useState(0);
   const [phase,    setPhase]    = useState('intro');
   const [status,   setStatus]   = useState(Array(6).fill(null)); // correct|wrong|null
   const [msg,      setMsg]      = useState('');
@@ -138,7 +138,7 @@ export default function EquationBuilder() {
     if (allOk) {
       const xp = Math.max(200 - hints * 30, 50);
       setScore(s => s + xp);
-      setMsg(`All balanced!  +${xp} XP`);
+      setMsg(`All balanced!`);
       setHints(0);
       setTimeout(() => {
         if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
@@ -161,7 +161,7 @@ export default function EquationBuilder() {
     setSlots(newSlots);
     setHints(h => h+1);
     setStatus(Array(6).fill(null));
-    setMsg(`Hint: slot ${emptySlot+1} revealed  (−30 XP)`);
+    setMsg(`Hint: slot ${emptySlot+1} revealed`);
   }
 
   function reset() {
@@ -227,10 +227,6 @@ export default function EquationBuilder() {
                 </svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">All Balanced!</h2>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40 rounded-2xl px-5 py-2 mb-5">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP</span>
-              </div>
               <button onClick={reset} className="btn-primary w-full py-3 text-base">Play Again</button>
             </motion.div>
           )}
@@ -344,7 +340,7 @@ export default function EquationBuilder() {
               <div className="flex gap-3 mb-3">
                 <button onClick={giveHint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
-                  Hint <span className="font-normal text-text-muted">(−30 XP)</span>
+                  Hint <span className="font-normal text-text-muted"></span>
                 </button>
                 <button onClick={()=>{setSlots(Array(6).fill(null));setPicked(null);setStatus(Array(6).fill(null));setMsg('');}}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-surface-border-strong transition-all">

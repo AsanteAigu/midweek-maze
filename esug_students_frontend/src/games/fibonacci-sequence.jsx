@@ -12,7 +12,7 @@ const PUZZLES = [
 const MAX_TRIES    = 3;
 const XP_PER_ROUND = 30;
 
-function HUD({ round, total, triesLeft, score }) {
+function HUD({ round, total, triesLeft }) {
   return (
     <div className="flex items-center justify-between bg-surface-card rounded-2xl
       border border-surface-border shadow-card px-5 py-3 mb-4">
@@ -66,7 +66,7 @@ export default function FibonacciSequence() {
   const [idx,       setIdx]      = useState(0);
   const [inputs,    setInputs]   = useState({});
   const [triesLeft, setTries]    = useState(MAX_TRIES);
-  const [score,     setScore]    = useState(0);
+  const [setScore]    = useState(0);
   const [hints,     setHints]    = useState(0);
   const [phase,     setPhase]    = useState('intro');
   const [feedback,  setFeedback] = useState({});
@@ -90,7 +90,7 @@ export default function FibonacciSequence() {
     if (ok) {
       const xp = Math.max(XP_PER_ROUND - hints * 5, 10);
       setScore(s => s + xp);
-      setMsg(`Correct!  +${xp} XP`);
+      setMsg(`Correct!`);
       setHints(0);
       setTimeout(() => {
         if (idx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
@@ -110,7 +110,7 @@ export default function FibonacciSequence() {
     const ai = puzzle.blanks.indexOf(bi);
     setInputs(p => ({ ...p, [bi]: String(puzzle.answers[ai]) }));
     setHints(h => h + 1);
-    setMsg('Hint used  (−5 XP)');
+    setMsg('Hint used');
   }
 
   function retry() { setInputs({}); setFeedback({}); setMsg(''); setPhase('playing'); }
@@ -176,13 +176,6 @@ export default function FibonacciSequence() {
                 </svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">All 5 Done!</h2>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40
-                rounded-2xl px-5 py-2 mb-4">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00">
-                  <path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
-                </svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP earned</span>
-              </div>
               <p className="font-body text-sm text-text-mid mb-6">You spotted every Fibonacci pattern.</p>
               <button onClick={reset} className="btn-primary w-full py-3 text-base">Play Again</button>
             </motion.div>
@@ -217,7 +210,7 @@ export default function FibonacciSequence() {
 
           {phase === 'playing' && (
             <motion.div key={`p${idx}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <HUD round={idx + 1} total={PUZZLES.length} triesLeft={triesLeft} score={score} />
+              <HUD round={idx + 1} total={PUZZLES.length} triesLeft={triesLeft} />
 
               <div className="bg-surface-card rounded-3xl border border-surface-border shadow-card p-6 mb-4">
                 <div className="flex items-center gap-2 mb-5">
@@ -275,7 +268,7 @@ export default function FibonacciSequence() {
                 <button onClick={hint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white
                     border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
-                  Hint  <span className="font-normal text-text-muted">(−5 XP)</span>
+                  Hint  <span className="font-normal text-text-muted"></span>
                 </button>
                 <button onClick={retry}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white

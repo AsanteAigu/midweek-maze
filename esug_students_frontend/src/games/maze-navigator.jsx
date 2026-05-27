@@ -207,7 +207,7 @@ export default function MazeNavigator() {
     if (!next) { setMsg('No path forward — you may be stuck'); setMsgErr(true); return; }
     setHint(next);
     setHints(h => h + 1);
-    setMsg(`Hint: move to row ${next[0]+1}, col ${next[1]+1}  (−20 XP)`);
+    setMsg(`Hint: move to row ${next[0]+1}, col ${next[1]+1}`);
     setMsgErr(false);
   }
 
@@ -377,7 +377,7 @@ export default function MazeNavigator() {
                 <button onClick={giveHint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white
                     border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
-                  Hint  <span className="font-normal text-text-muted">(−20 XP)</span>
+                  Hint  <span className="font-normal text-text-muted"></span>
                 </button>
                 <button onClick={restart}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white

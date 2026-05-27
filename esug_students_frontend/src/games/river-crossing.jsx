@@ -129,7 +129,7 @@ export default function RiverCrossing() {
   const [phase,  setPhase]  = useState('intro'); // select|crossing|won|failed
   const [moves,  setMoves]  = useState(0);
   const [triesLeft,setTries]= useState(MAX_TRIES);
-  const [score,  setScore]  = useState(0);
+  const [setScore]  = useState(0);
   const [msg,    setMsg]    = useState('');
   const [hints,  setHints]  = useState(0);
 
@@ -184,7 +184,7 @@ export default function RiverCrossing() {
       if (finalRight.length === puzzle.entities.length) {
         const xp = Math.max(150 - hints * 20, 40) + (newMoves <= puzzle.optimalMoves ? 50 : 0);
         setScore(s => s + xp);
-        setMsg(newMoves <= puzzle.optimalMoves ? `Optimal! +${xp} XP` : `Solved in ${newMoves} moves! +${xp} XP`);
+        setMsg(newMoves <= puzzle.optimalMoves ? `Optimal!` : `Solved in ${newMoves} moves!`);
         setPhase('won'); if (pIdx >= PUZZLES.length - 1) window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
       } else {
         setPhase('select');
@@ -203,7 +203,7 @@ export default function RiverCrossing() {
       6: [`Finally, take ${puzzle.entities[0].label} across`],
     };
     const tip = hints_map[moves]?.[0] ?? 'Follow the optimal 7-move path';
-    setMsg(`Hint: ${tip}  (−20 XP)`);
+    setMsg(`Hint: ${tip}`);
     setHints(h => h+1);
   }
 
@@ -280,10 +280,6 @@ export default function RiverCrossing() {
               <h2 className="font-display font-black text-3xl text-text-dark mb-1">Everyone Across!</h2>
               <p className="font-mono text-lg text-text-mid mb-2">{moves} moves  <span className="text-text-muted text-sm">/ optimal: {puzzle.optimalMoves}</span></p>
               {moves <= puzzle.optimalMoves && <p className="font-display font-bold text-sm text-duo-green mb-2">Optimal path!</p>}
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40 rounded-2xl px-5 py-2 mb-5">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP</span>
-              </div>
               <div className="flex gap-3">
                 {pIdx < PUZZLES.length - 1
                   ? <button onClick={nextPuzzle} className="btn-primary flex-1 py-3">Next Puzzle</button>
@@ -389,7 +385,7 @@ export default function RiverCrossing() {
               <div className="flex gap-3 mb-3">
                 <button onClick={giveHint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
-                  Hint <span className="font-normal text-text-muted">(−20 XP)</span>
+                  Hint <span className="font-normal text-text-muted"></span>
                 </button>
                 <button onClick={restart}
                   className="px-5 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-surface-border-strong transition-all">

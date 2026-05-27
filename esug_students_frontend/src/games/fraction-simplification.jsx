@@ -13,7 +13,7 @@ const MAX_TRIES = 3;
 
 function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
 
-function HUD({ round, total, triesLeft, score }) {
+function HUD({ round, total, triesLeft }) {
   return (
     <div className="flex items-center justify-between bg-surface-card rounded-2xl
       border border-surface-border shadow-card px-5 py-3 mb-4">
@@ -58,7 +58,7 @@ export default function FractionSimplification() {
   const [numInput,  setNumIn]  = useState('');
   const [denInput,  setDenIn]  = useState('');
   const [triesLeft, setTries]  = useState(MAX_TRIES);
-  const [score,     setScore]  = useState(0);
+  const [setScore]  = useState(0);
   const [phase,     setPhase]  = useState('intro');
   const [feedback,  setFB]     = useState(null); // null|'correct'|'wrong'|'notsimplified'
   const [msg,       setMsg]    = useState('');
@@ -92,7 +92,7 @@ export default function FractionSimplification() {
     setFB('correct');
     const xp = hintShown ? 15 : 25;
     setScore(s => s + xp);
-    setMsg(`Correct!  +${xp} XP`);
+    setMsg(`Correct!`);
     setHint(false);
     setTimeout(() => {
       if (idx >= FRACTIONS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
@@ -168,13 +168,6 @@ export default function FractionSimplification() {
                 </svg>
               </div>
               <h2 className="font-display font-black text-3xl text-text-dark mb-2">All 5 Reduced!</h2>
-              <div className="inline-flex items-center gap-2 bg-duo-yellow/15 border-2 border-duo-yellow/40
-                rounded-2xl px-5 py-2 mb-4">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#E6AC00">
-                  <path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/>
-                </svg>
-                <span className="font-display font-black text-xl text-duo-yellow-dark">{score} XP earned</span>
-              </div>
               <p className="font-body text-sm text-text-mid mb-6">
                 Every fraction fully simplified. Well done.
               </p>
@@ -207,7 +200,7 @@ export default function FractionSimplification() {
 
           {phase === 'playing' && (
             <motion.div key={`fr${idx}`} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-              <HUD round={idx + 1} total={FRACTIONS.length} triesLeft={triesLeft} score={score} />
+              <HUD round={idx + 1} total={FRACTIONS.length} triesLeft={triesLeft} />
 
               <div className="bg-surface-card rounded-3xl border border-surface-border shadow-card p-6 mb-4">
                 <h2 className="font-display font-black text-lg text-text-dark mb-5 flex items-center gap-2">
