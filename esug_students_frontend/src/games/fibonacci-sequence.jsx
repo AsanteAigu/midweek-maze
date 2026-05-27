@@ -291,7 +291,7 @@ export default function FibonacciSequence() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Fibonacci Sequence
+          ESUG Interactive Games — Fibonacci Sequence
         </p>
       </div>
     </div>

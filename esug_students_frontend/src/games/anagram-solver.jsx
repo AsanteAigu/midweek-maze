@@ -391,7 +391,7 @@ export default function AnagramSolver() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Anagram Solver</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Anagram Solver</p>
       </div>
     </div>
   );

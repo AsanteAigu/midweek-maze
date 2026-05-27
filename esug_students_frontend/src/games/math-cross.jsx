@@ -441,7 +441,7 @@ export default function MathCross() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Math Cross</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Math Cross</p>
       </div>
     </div>
   );

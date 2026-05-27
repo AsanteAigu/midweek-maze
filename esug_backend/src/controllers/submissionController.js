@@ -105,7 +105,7 @@ async function submit(req, res) {
       });
     }
 
-    // ── 5a. Midweek Maze — award XP immediately based on time ─────────────
+    // ── 5a. Midweek Maze — store XP now, credit Wednesday like all challenges ─
     if (challenge.challenge_type === 'midweek_maze') {
       // Clamp client-sent XP to [0, xp_reward]
       const earnedXp = Math.min(
@@ -119,8 +119,8 @@ async function submit(req, res) {
           student_id: studentId,
           challenge_id,
           answer: answerToStore,
-          is_correct: earnedXp > 0,
-          xp_earned: earnedXp,
+          is_correct: null,    // pending — scheduler credits XP on Wednesday
+          xp_earned: earnedXp, // pre-calculated time-based XP stored for scheduler
         })
         .select()
         .single();
@@ -132,24 +132,10 @@ async function submit(req, res) {
         throw insertError;
       }
 
-      if (earnedXp > 0) {
-        await supabase.from('xp_history').insert({
-          student_id: studentId,
-          challenge_id,
-          xp_earned: earnedXp,
-          reason: `Midweek Maze — ${challenge.title}`,
-        });
-        const { error: rpcErr } = await supabase.rpc('increment_xp', { student_uuid: studentId, xp_amount: earnedXp });
-        if (rpcErr) {
-          const { data: student } = await supabase.from('students').select('total_xp').eq('id', studentId).single();
-          if (student) await supabase.from('students').update({ total_xp: (student.total_xp || 0) + earnedXp }).eq('id', studentId);
-        }
-      }
-
       return res.status(201).json({
         success: true,
-        message: earnedXp > 0 ? `${earnedXp} XP earned!` : 'Submitted — better luck next time',
-        submission: { id: submission.id, submitted_at: submission.submitted_at, is_correct: earnedXp > 0, xp_earned: earnedXp },
+        message: 'Game completed! Results drop Wednesday at midnight.',
+        submission: { id: submission.id, submitted_at: submission.submitted_at, is_correct: null, xp_earned: earnedXp },
       });
     }
 

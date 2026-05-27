@@ -217,7 +217,7 @@ export default function RecursiveSequence() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Recursive Sequence</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Recursive Sequence</p>
       </div>
     </div>
   );

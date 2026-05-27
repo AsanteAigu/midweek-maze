@@ -310,7 +310,7 @@ export default function TowerOfHanoi() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Tower of Hanoi
+          ESUG Interactive Games — Tower of Hanoi
         </p>
       </div>
     </div>

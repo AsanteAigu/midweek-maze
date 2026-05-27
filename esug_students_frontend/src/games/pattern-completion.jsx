@@ -262,7 +262,7 @@ export default function PatternCompletion() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Pattern Completion</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Pattern Completion</p>
       </div>
     </div>
   );

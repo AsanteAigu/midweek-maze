@@ -246,7 +246,7 @@ export default function SatProblem() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — SAT Problem</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — SAT Problem</p>
       </div>
     </div>
   );

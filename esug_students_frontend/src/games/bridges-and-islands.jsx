@@ -310,7 +310,7 @@ export default function BridgesAndIslands() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Bridges &amp; Islands</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Bridges &amp; Islands</p>
       </div>
     </div>
   );

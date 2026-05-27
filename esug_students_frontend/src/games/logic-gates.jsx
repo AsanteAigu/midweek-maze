@@ -446,7 +446,7 @@ export default function LogicGates() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Logic Gates
+          ESUG Interactive Games — Logic Gates
         </p>
       </div>
     </div>

@@ -219,7 +219,7 @@ export default function RotationalSymmetry() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Rotational Symmetry</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Rotational Symmetry</p>
       </div>
     </div>
   );

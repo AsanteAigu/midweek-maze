@@ -237,7 +237,7 @@ export default function RubiksCube() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Rubik's Cube 2×2</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Rubik's Cube 2×2</p>
       </div>
     </div>
   );

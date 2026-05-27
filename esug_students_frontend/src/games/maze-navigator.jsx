@@ -396,7 +396,7 @@ export default function MazeNavigator() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Maze Navigator
+          ESUG Interactive Games — Maze Navigator
         </p>
       </div>
     </div>

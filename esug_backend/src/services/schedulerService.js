@@ -50,6 +50,12 @@ async function unlockChallenge() {
  * @returns {{ isCorrect: boolean, xpEarned: number }}
  */
 async function scoreSubmission(submission, challenge, questions) {
+  // ── Midweek Maze — XP was pre-calculated at submission time, just confirm ──
+  if (challenge.challenge_type === 'midweek_maze') {
+    const xpEarned = submission.xp_earned || 0;
+    return { isCorrect: xpEarned > 0, xpEarned };
+  }
+
   if (challenge.has_questions && questions && questions.length > 0) {
     // ── Multi-question challenge ────────────────────────────────────────────
     let answerMap;
@@ -79,7 +85,7 @@ async function scoreChallenge(specificChallengeId = null) {
   try {
     let challengeQuery = supabase
       .from('challenges')
-      .select('id, title, week_number, answer_key, xp_reward, partial_xp, has_questions');
+      .select('id, title, week_number, answer_key, xp_reward, partial_xp, has_questions, challenge_type');
 
     if (specificChallengeId) {
       // Manual score: target this challenge regardless of is_scored state
@@ -118,7 +124,7 @@ async function scoreChallenge(specificChallengeId = null) {
 
       const { data: submissions, error: subError } = await supabase
         .from('submissions')
-        .select('id, student_id, answer')
+        .select('id, student_id, answer, xp_earned')
         .eq('challenge_id', challenge.id)
         .is('is_correct', null);
 

@@ -324,7 +324,7 @@ export default function PrimeFactorization() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Prime Factorization
+          ESUG Interactive Games — Prime Factorization
         </p>
       </div>
     </div>

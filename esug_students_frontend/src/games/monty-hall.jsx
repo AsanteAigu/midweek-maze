@@ -349,7 +349,7 @@ export default function MontyHall() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Monty Hall
+          ESUG Interactive Games — Monty Hall
         </p>
       </div>
     </div>

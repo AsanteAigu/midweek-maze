@@ -217,7 +217,7 @@ export default function ModularArithmetic() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Modular Arithmetic</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Modular Arithmetic</p>
       </div>
     </div>
   );

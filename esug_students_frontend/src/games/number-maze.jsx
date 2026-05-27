@@ -357,7 +357,7 @@ export default function NumberMaze() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Number Maze
+          ESUG Interactive Games — Number Maze
         </p>
       </div>
     </div>

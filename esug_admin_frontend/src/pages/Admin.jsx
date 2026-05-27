@@ -1335,7 +1335,7 @@ export default function Admin() {
               <Icon.Wrench className="w-6 h-6 text-duo-blue" />
               <h1 className="font-display font-black text-2xl text-text-dark">Admin Dashboard</h1>
             </div>
-            <p className="font-body text-text-muted text-sm">ISAG Quiz Platform — Admin Control Center</p>
+            <p className="font-body text-text-muted text-sm">ESUG Quiz Platform — Admin Control Center</p>
           </div>
           {activeTab === 'challenges' && (
             <button

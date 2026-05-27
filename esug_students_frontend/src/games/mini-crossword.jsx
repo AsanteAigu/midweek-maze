@@ -285,7 +285,7 @@ export default function MiniCrossword() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Mini Crossword</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Mini Crossword</p>
       </div>
     </div>
   );

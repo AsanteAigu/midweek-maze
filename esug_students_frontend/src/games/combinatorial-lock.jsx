@@ -225,7 +225,7 @@ export default function CombinatorialLock() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Combinatorial Lock</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Combinatorial Lock</p>
       </div>
     </div>
   );

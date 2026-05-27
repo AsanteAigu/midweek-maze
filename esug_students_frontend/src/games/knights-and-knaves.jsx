@@ -392,7 +392,7 @@ export default function KnightsAndKnaves() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Knights & Knaves
+          ESUG Interactive Games — Knights & Knaves
         </p>
       </div>
     </div>

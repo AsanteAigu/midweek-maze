@@ -379,7 +379,7 @@ export default function MiniSudoku() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Mini Sudoku
+          ESUG Interactive Games — Mini Sudoku
         </p>
       </div>
     </div>

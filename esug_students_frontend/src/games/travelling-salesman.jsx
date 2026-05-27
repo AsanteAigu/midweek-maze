@@ -244,7 +244,7 @@ export default function TravellingSalesman() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Travelling Salesman</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Travelling Salesman</p>
       </div>
     </div>
   );

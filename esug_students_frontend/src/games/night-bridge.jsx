@@ -592,7 +592,7 @@ export default function App() {
 
       {/* Footer */}
       <p className="mt-10 text-text-muted text-xs font-mono text-center">
-        ISAG Interactive Games — Canyon Crossing
+        ESUG Interactive Games — Canyon Crossing
       </p>
     </div>
   );

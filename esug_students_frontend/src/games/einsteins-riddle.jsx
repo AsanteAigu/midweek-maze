@@ -259,7 +259,7 @@ export default function EinsteinsRiddle() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Einstein's Riddle</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Einstein's Riddle</p>
       </div>
     </div>
   );

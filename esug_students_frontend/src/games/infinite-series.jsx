@@ -262,7 +262,7 @@ export default function InfiniteSeries() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Infinite Series</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Infinite Series</p>
       </div>
     </div>
   );

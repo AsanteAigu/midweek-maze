@@ -411,8 +411,9 @@ function formatAnswerLabel(answerStr, challenge) {
 
 // ── XP celebration card shown right after submit ───────────────────────────────
 function SubmittedCard({ submission, challenge }) {
-  const pending = submission.is_correct === null;
-  const correct = submission.is_correct === true;
+  const isMaze = challenge?.challenge_type === 'midweek_maze';
+  const pending = isMaze || submission.is_correct === null;
+  const correct = !isMaze && submission.is_correct === true;
 
   return (
     <motion.div {...scaleIn} className="card text-center py-10">
@@ -513,13 +514,8 @@ export default function Challenge() {
   const submitMutation = useMutation({
     mutationFn: (payload) => apiClient.post('/api/submit', payload),
     onSuccess: (response) => {
-      const data = response?.data;
-      const xpEarned = data?.submission?.xp_earned;
-      if (xpEarned !== undefined) {
-        toast.success(xpEarned > 0 ? `${xpEarned} XP earned!` : 'Submitted — no XP this time');
-      } else {
-        toast.success('Answer submitted — results drop Wednesday at midnight');
-      }
+      const msg = response?.data?.message;
+      toast.success(msg || 'Answer submitted — results drop Wednesday at midnight');
       queryClient.invalidateQueries({ queryKey: ['challenge', challengeId || 'current'] });
       setShowModal(false);
     },

@@ -469,7 +469,7 @@ export default function AgesOfThree() {
         </AnimatePresence>
 
         <p className="mt-8 text-text-muted text-xs font-mono text-center">
-          ISAG Interactive Games — Ages of Three
+          ESUG Interactive Games — Ages of Three
         </p>
       </div>
     </div>

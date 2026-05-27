@@ -266,7 +266,7 @@ export default function EulersProblem() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Euler's Problem</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Euler's Problem</p>
       </div>
     </div>
   );

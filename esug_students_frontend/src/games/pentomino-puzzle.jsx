@@ -314,7 +314,7 @@ export default function PentominoPuzzle() {
             </motion.div>
           )}
         </AnimatePresence>
-        <p className="mt-8 text-text-muted text-xs font-mono text-center">ISAG Interactive Games — Pentomino Puzzle</p>
+        <p className="mt-8 text-text-muted text-xs font-mono text-center">ESUG Interactive Games — Pentomino Puzzle</p>
       </div>
     </div>
   );
