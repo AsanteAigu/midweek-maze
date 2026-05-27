@@ -216,7 +216,7 @@ export default function AnagramSolver() {
     setMsgOk(true);
 
     if (newFound.length >= minWords && phase === 'playing') {
-      setTimeout(() => setPhase('won'), 800);
+      setTimeout(() => { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }, 800);
     }
   }
 

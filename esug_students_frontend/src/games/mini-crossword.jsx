@@ -102,7 +102,7 @@ export default function MiniCrossword() {
     setCorrectCells(correct);
     if (wrong.size===0) {
       setScore(s => s + (hintUsed ? 100 : 200));
-      setPhase('won');
+      setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
     } else {
       const t = tries-1; setTries(t);
       if (t<=0) setPhase('lost');

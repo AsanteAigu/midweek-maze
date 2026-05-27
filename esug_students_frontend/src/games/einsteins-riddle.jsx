@@ -82,7 +82,7 @@ export default function EinsteinsRiddle() {
     if (wrong.size === 0) {
       const xp = Math.max(200 - hintCount * 40, 40);
       setScore(s => s + xp);
-      setPhase('won');
+      setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
     } else {
       const t = tries - 1; setTries(t);
       if (t <= 0) setPhase('lost');

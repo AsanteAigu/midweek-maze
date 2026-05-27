@@ -159,7 +159,7 @@ export default function PentominoPuzzle() {
       setScore(s => s + 200);
       setMsg('Perfect fit!');
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i=>i+1); setGrid(Array(GRID_ROWS).fill(null).map(()=>Array(GRID_COLS).fill(null))); setWrongCells(new Set()); setMsg(''); setActiveColor(null); }
       }, 900);
     } else {

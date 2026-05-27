@@ -57,7 +57,7 @@ export default function PangramBuilder() {
     setScore(s => s + xp);
     setMsg(`Pangram! +${xp} XP${bonus ? ` (+${bonus} efficiency bonus)` : ''}`);
     setTimeout(() => {
-      if (round >= ROUNDS.length - 1) setPhase('won');
+      if (round >= ROUNDS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
       else { setRound(i => i + 1); setText(''); setMsg(''); setTries(MAX_TRIES); setHintShown(false); }
     }, 1000);
   }

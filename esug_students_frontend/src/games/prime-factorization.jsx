@@ -107,7 +107,7 @@ export default function PrimeFactorization() {
     setHints(0);
 
     setTimeout(() => {
-      if (roundIdx >= ROUNDS.length - 1) { setPhase('won'); }
+      if (roundIdx >= ROUNDS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
       else { setRoundIdx(i => i + 1); setSelected([]); setMsg(''); }
     }, 900);
   }

@@ -144,7 +144,7 @@ export default function TowerOfHanoi() {
     setMoves(newMoves);
 
     if (newPegs.C.length === DISC_COUNT) {
-      setPhase('won');
+      setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
     } else {
       showMsg(`Moved disc ${disc}: Peg ${selected} → Peg ${peg}  (${newMoves} moves)`, 'info');
     }

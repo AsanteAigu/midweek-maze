@@ -112,7 +112,7 @@ export default function AngryRoosters() {
       setScore(s => s + 150);
       setMsg('Correct! Each rooster has its own pen.');
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i => i + 1); setSel(null); setFb(null); setMsg(''); }
       }, 900);
     } else {

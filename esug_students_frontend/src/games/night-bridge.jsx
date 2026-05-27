@@ -345,7 +345,7 @@ export default function App() {
         setTriesLeft(newTries);
         setPhase(newTries <= 0 ? 'gameover' : 'lost');
       } else if (updated.every((c) => c.side === 'end')) {
-        setPhase('won');
+        setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
       }
     }, CROSS_MS);
   }, [chars, selected, lantern, elapsed, log, triesLeft]);

@@ -182,7 +182,7 @@ export default function KnightsAndKnaves() {
       setMsg(`Correct!  +${xp} XP`);
       setHints(0);
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); }
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else {
           setPIdx(i => i + 1);
           setAssigns({ A: null, B: null, C: null });

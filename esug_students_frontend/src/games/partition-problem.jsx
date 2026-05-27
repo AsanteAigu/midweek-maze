@@ -93,7 +93,7 @@ export default function PartitionProblem() {
   }
 
   function advance() {
-    if (pIdx >= PUZZLES.length - 1) setPhase('won');
+    if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
     else { setPIdx(i => i + 1); setSubsetA(new Set()); setMsg(''); setTries(MAX_TRIES); }
   }
 

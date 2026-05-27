@@ -93,7 +93,7 @@ export default function FibonacciSequence() {
       setMsg(`Correct!  +${xp} XP`);
       setHints(0);
       setTimeout(() => {
-        if (idx >= PUZZLES.length - 1) { setPhase('won'); }
+        if (idx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setIdx(i => i + 1); setInputs({}); setFeedback({}); setMsg(''); }
       }, 900);
     } else {

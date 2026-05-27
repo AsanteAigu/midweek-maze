@@ -60,7 +60,7 @@ export default function CombinatorialLock() {
       setScore(s => s + xp);
       setMsg(`Cracked! +${xp} XP`);
       setTimeout(() => {
-        if (round >= totalRounds) setPhase('won');
+        if (round >= totalRounds) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else setPhase('roundWon');
       }, 800);
     } else if (newGuesses.length >= MAX_GUESSES) {

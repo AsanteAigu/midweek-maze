@@ -103,7 +103,7 @@ export default function DotConnection() {
       setScore(s => s + 300);
       setMsg('All edges traversed!');
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i => i+1); setPath([]); setUsedEdges(new Set()); setMsg(''); }
       }, 900);
     }

@@ -81,7 +81,7 @@ export default function TravellingSalesman() {
     setScore(s => s + xp);
     setSubmitted(true);
     setMsg(`Your route: ${d} km${isOptimal ? ' — OPTIMAL!' : ` (optimal is ${OPTIMAL} km)`}. +${xp} XP`);
-    setTimeout(() => setPhase('won'), 1200);
+    setTimeout(() => { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }, 1200);
   }
 
   function reset() {

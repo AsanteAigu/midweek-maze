@@ -78,7 +78,7 @@ export default function SatProblem() {
       setScore(s => s + 300);
       setMsg('All clauses satisfied!');
       setTimeout(() => {
-        if (fIdx >= FORMULAS.length - 1) setPhase('won');
+        if (fIdx >= FORMULAS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setFIdx(i => i + 1); setVals({}); setSubmitted(false); setMsg(''); }
       }, 900);
     } else {

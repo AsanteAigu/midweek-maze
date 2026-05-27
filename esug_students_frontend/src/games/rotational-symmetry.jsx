@@ -83,7 +83,7 @@ export default function RotationalSymmetry() {
       setStreak(s=>s+1);
       setMsg(`Correct!${streakBonus?` +${streakBonus} streak bonus`:''} +${xp} XP`);
       setTimeout(()=>{
-        if(pIdx>=PUZZLES.length-1)setPhase('won');
+        if(pIdx>=PUZZLES.length-1){ setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else{setPIdx(i=>i+1);setSel(null);setFb(null);setMsg('');setHovering(null);}
       },900);
     } else {

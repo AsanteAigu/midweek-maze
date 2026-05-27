@@ -80,7 +80,7 @@ export default function ModularArithmetic() {
       setScore(s => s + 150);
       setMsg(`Correct! ${p.value} ÷ ${p.mod} = ${Math.floor(p.value / p.mod)} remainder ${p.answer}`);
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i => i + 1); setInput(''); setFb(null); setMsg(''); setRevealed(null); }
       }, 1100);
     } else {

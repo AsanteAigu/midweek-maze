@@ -128,7 +128,7 @@ export default function MontyHall() {
   }
 
   function nextRound() {
-    if (round >= TOTAL_ROUNDS) { setPhase('done'); return; }
+    if (round >= TOTAL_ROUNDS) { window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); setPhase('done'); return; }
     const next = round + 1;
     setRound(next);
     setPrize(Math.floor(Math.random() * TOTAL_DOORS));

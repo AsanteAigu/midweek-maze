@@ -198,7 +198,7 @@ export default function LogicGates() {
       setHint(false);
       setGuesses(0);
       setTimeout(() => {
-        if (roundIdx >= CIRCUITS.length - 1) setPhase('won');
+        if (roundIdx >= CIRCUITS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setRound(i => i+1); setInputs({ A:false, B:false, C:false }); setFB(null); setMsg(''); }
       }, 900);
     } else {

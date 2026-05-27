@@ -126,7 +126,7 @@ export default function BridgesAndIslands() {
     setWrongIslands(wI);
     if (wI.size === 0 && wB.size === 0) {
       setScore(s => s + 200);
-      setPhase('won');
+      setPhase('won'); if (pIdx >= PUZZLES.length - 1) window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
     } else {
       const t = tries - 1; setTries(t);
       if (t <= 0) setPhase('lost');

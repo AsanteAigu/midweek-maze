@@ -185,7 +185,7 @@ export default function RiverCrossing() {
         const xp = Math.max(150 - hints * 20, 40) + (newMoves <= puzzle.optimalMoves ? 50 : 0);
         setScore(s => s + xp);
         setMsg(newMoves <= puzzle.optimalMoves ? `Optimal! +${xp} XP` : `Solved in ${newMoves} moves! +${xp} XP`);
-        setPhase('won');
+        setPhase('won'); if (pIdx >= PUZZLES.length - 1) window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
       } else {
         setPhase('select');
       }

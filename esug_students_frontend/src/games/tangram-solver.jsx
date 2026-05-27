@@ -156,7 +156,7 @@ export default function TangramSolver() {
       setScore(s => s + 200);
       setMsg('Correct arrangement!');
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i => i+1); setSel(null); setFb(null); setMsg(''); }
       }, 900);
     } else {

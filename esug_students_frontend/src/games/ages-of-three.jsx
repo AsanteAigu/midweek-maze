@@ -216,7 +216,7 @@ export default function AgesOfThree() {
       setScore(s => s + xp);
       setMsg(`Correct!  +${xp} XP`);
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i => i+1); setInputs(['','','']); setFB(null); setMsg(''); setHint(false); setChosen(null); }
       }, 900);
     } else {

@@ -67,7 +67,7 @@ export default function RecursiveSequence() {
       setScore(sc => sc + 200);
       setMsg('Correct sequence!');
       setTimeout(() => {
-        if (sIdx >= SEQUENCES.length - 1) setPhase('won');
+        if (sIdx >= SEQUENCES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setSIdx(i => i + 1); setInputs(['','','']); setFb(null); setMsg(''); setTries(MAX_TRIES); }
       }, 900);
     } else {

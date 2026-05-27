@@ -112,7 +112,7 @@ export default function InfiniteSeries() {
       setScore(sc => sc + 250);
       setMsg(`Correct! The sum converges to ${s.numAns}/${s.denAns}.`);
       setTimeout(() => {
-        if (sIdx >= SERIES.length - 1) setPhase('won');
+        if (sIdx >= SERIES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setSIdx(i => i + 1); setNum(''); setDen(''); setFb(null); setMsg(''); setShowPartial(false); }
       }, 1000);
     } else {

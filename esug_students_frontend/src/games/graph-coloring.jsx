@@ -94,7 +94,7 @@ export default function GraphColoring() {
     const c = getConflicts(coloring);
     if (c.size === 0) {
       setScore(s => s + 300);
-      setPhase('won');
+      setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*');
     } else {
       const t = tries - 1; setTries(t);
       if (t <= 0) setPhase('lost');

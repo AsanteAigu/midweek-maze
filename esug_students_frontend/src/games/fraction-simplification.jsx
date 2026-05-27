@@ -95,7 +95,7 @@ export default function FractionSimplification() {
     setMsg(`Correct!  +${xp} XP`);
     setHint(false);
     setTimeout(() => {
-      if (idx >= FRACTIONS.length - 1) { setPhase('won'); }
+      if (idx >= FRACTIONS.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
       else { setIdx(i => i + 1); setNumIn(''); setDenIn(''); setFB(null); setMsg(''); }
     }, 900);
   }

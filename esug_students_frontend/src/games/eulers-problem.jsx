@@ -107,7 +107,7 @@ export default function EulersProblem() {
       setRevealed(true);
       setMsg(`Correct! ${p.explanation}`);
       setTimeout(() => {
-        if (pIdx >= PUZZLES.length - 1) setPhase('won');
+        if (pIdx >= PUZZLES.length - 1) { setPhase('won'); window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
         else { setPIdx(i=>i+1); setMsg(''); setRevealed(false); }
       }, 1400);
     } else {

@@ -183,7 +183,7 @@ export default function MazeNavigator() {
     setMsg('');
     setMsgErr(false);
 
-    if (r === er && c === ec) setPhase('won');
+    if (r === er && c === ec) { setPhase('won'); if (mIdx >= MAZES.length - 1) window.parent.postMessage({ type: 'MAZE_COMPLETE' }, '*'); }
   }, [phase, maze, curPos, visited, moves, er, ec]);
 
   // Keyboard support
