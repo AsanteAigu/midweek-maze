@@ -5,4 +5,6 @@ node_modules/
 .env.local
 **/.env
 **/.env.local
-interactive_games/*/dist/
+# word-worm and etymology-chain have API keys baked into their builds
+interactive_games/word-worm/dist/
+interactive_games/etymology-chain/dist/
