@@ -9,6 +9,7 @@ import { CardSkeleton } from '../components/SkeletonLoader';
 import XpBadge from '../components/XpBadge';
 import Icon from '../components/Icons';
 import apiClient from '../utils/axiosClient';
+import GameRenderer from '../games/GameRenderer';
 
 
 // ── Maze elapsed timer (counts up from when student opens the challenge) ──────
@@ -691,7 +692,7 @@ export default function Challenge() {
               </motion.div>
             )}
 
-            {/* Midweek Maze — game iframe */}
+            {/* Midweek Maze — inline game component */}
             {challenge.challenge_type === 'midweek_maze' && challenge.game_slug && (
               <motion.div {...pageTransition} className="card mb-6 p-0 overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 bg-surface-off border-b border-surface-border">
@@ -699,13 +700,7 @@ export default function Challenge() {
                   <span className="font-display font-bold text-sm text-text-dark">Interactive Game</span>
                   <span className="ml-auto font-mono text-xs text-text-muted">{challenge.game_slug}</span>
                 </div>
-                <iframe
-                  src={`${import.meta.env.VITE_API_URL}/games/${challenge.game_slug}/`}
-                  title={challenge.title}
-                  className="w-full border-0 block"
-                  style={{ height: '600px' }}
-                  allow="fullscreen"
-                />
+                <GameRenderer slug={challenge.game_slug} />
               </motion.div>
             )}
 

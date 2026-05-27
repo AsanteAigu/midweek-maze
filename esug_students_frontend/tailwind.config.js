@@ -1,17 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './src/games/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
         duo: {
-          green: '#1CB0F6',
-          'green-dark': '#0F8FC0',
-          'green-light': '#DFF4FF',
+          green: '#58CC02',
+          'green-dark': '#3D8F01',
+          'green-light': '#E8FFD4',
           yellow: '#FFC800',
           'yellow-dark': '#E6AC00',
           blue: '#1CB0F6',
           'blue-dark': '#0F8FC0',
+          'blue-light': '#DFF4FF',
           red: '#FF4B4B',
           pink: '#FF86D0',
           purple: '#CE82FF',
