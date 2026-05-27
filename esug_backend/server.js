@@ -25,7 +25,7 @@ const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173,http:
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-app.use(cors({
+const corsOptions = {
   origin(origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -34,7 +34,10 @@ app.use(cors({
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-}));
+};
+
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
 
 // Logging
 if (process.env.NODE_ENV !== 'test') {
