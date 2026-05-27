@@ -10,7 +10,6 @@ const GAMES = {
   'dot-connection':       lazy(() => import('./dot-connection.jsx')),
   'einsteins-riddle':     lazy(() => import('./einsteins-riddle.jsx')),
   'equation-builder':     lazy(() => import('./equation-builder.jsx')),
-  'etymology-chain':      lazy(() => import('./etymology-chain.jsx')),
   'eulers-problem':       lazy(() => import('./eulers-problem.jsx')),
   'fibonacci-sequence':   lazy(() => import('./fibonacci-sequence.jsx')),
   'fraction-simplification': lazy(() => import('./fraction-simplification.jsx')),
@@ -41,7 +40,6 @@ const GAMES = {
   'tangram-solver':       lazy(() => import('./tangram-solver.jsx')),
   'tower-of-hanoi':       lazy(() => import('./tower-of-hanoi.jsx')),
   'travelling-salesman':  lazy(() => import('./travelling-salesman.jsx')),
-  'word-worm':            lazy(() => import('./word-worm.jsx')),
 };
 
 export default function GameRenderer({ slug }) {
