@@ -22,7 +22,7 @@ for (const slug of slugs) {
   const dir = path.join(gamesRoot, slug);
   try {
     console.log(`[${slug}] installing...`);
-    execSync('npm install --prefer-offline --no-audit', { cwd: dir, stdio: 'pipe' });
+    execSync('npm install --prefer-offline --no-audit --include=dev', { cwd: dir, stdio: 'pipe' });
     console.log(`[${slug}] building...`);
     execSync('npm run build', { cwd: dir, stdio: 'pipe' });
     console.log(`[${slug}] ✓`);
