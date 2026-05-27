@@ -289,7 +289,7 @@ export default function App() {
   const [triesLeft, setTriesLeft] = useState(MAX_TRIES);
   const [selected,  setSelected]  = useState([]);
   const [crossing,  setCrossing]  = useState([]);
-  const [phase,     setPhase]     = useState('intro');
+  const [phase,     setPhase]     = useState('playing');
   const [log,       setLog]       = useState([]);
   const [error,     setError]     = useState('');
 
