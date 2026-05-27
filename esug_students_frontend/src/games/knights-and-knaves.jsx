@@ -198,6 +198,7 @@ export default function KnightsAndKnaves() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     // Reveal one character's correct type
     const unknown = puzzle.chars.find(c => assigns[c.id] !== puzzle.solution[c.id]);
     if (!unknown) return;

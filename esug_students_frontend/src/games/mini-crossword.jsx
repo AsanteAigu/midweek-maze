@@ -111,6 +111,7 @@ export default function MiniCrossword() {
   }
 
   function useHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const target = HINT_WORDS.find(w => w.cells.some(([r,c]) => grid[r][c]!==SOLUTION[r][c]));
     if (!target) return;
     setHintUsed(true);

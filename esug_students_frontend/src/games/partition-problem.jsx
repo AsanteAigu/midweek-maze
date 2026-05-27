@@ -241,7 +241,7 @@ export default function PartitionProblem() {
                   Impossible
                 </button>
               </div>
-              <button onClick={() => setMsg(p.hint)}
+              <button onClick={() => { window.parent.postMessage({ type: 'HINT_USED' }, '*'); setMsg(p.hint); }}
                 className="w-full py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
                 Hint
               </button>

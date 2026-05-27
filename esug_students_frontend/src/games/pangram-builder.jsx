@@ -163,7 +163,7 @@ export default function PangramBuilder() {
               </AnimatePresence>
 
               <div className="flex gap-3 mb-3">
-                <button onClick={() => { setHintShown(true); setMsg(HINT); }} disabled={hintShown}
+                <button onClick={() => { window.parent.postMessage({ type: 'HINT_USED' }, '*'); setHintShown(true); setMsg(HINT); }} disabled={hintShown}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all disabled:opacity-40">
                   Hint <span className="font-normal text-text-muted">(classic example)</span>
                 </button>

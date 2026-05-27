@@ -199,7 +199,7 @@ export default function RecursiveSequence() {
               </AnimatePresence>
 
               <div className="flex gap-3 mb-3">
-                <button onClick={() => setMsg(`Hint: ${s.hint}`)}
+                <button onClick={() => { window.parent.postMessage({ type: 'HINT_USED' }, '*'); setMsg(`Hint: ${s.hint}`); }}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all">
                   Hint
                 </button>

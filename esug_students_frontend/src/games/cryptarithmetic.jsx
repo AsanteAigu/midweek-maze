@@ -190,6 +190,7 @@ export default function Cryptarithmetic() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     setHint(true);
     setMsg(`Hint: ${puzzle.hint}`);
   }

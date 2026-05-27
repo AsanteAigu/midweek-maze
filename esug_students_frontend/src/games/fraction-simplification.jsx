@@ -101,6 +101,7 @@ export default function FractionSimplification() {
   }
 
   function hint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     setMsg(`GCD(${fr.num}, ${fr.den}) = ${gcd(fr.num, fr.den)}  →  divide both by it`);
     setHint(true);
   }

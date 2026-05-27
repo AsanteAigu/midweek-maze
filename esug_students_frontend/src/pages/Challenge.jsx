@@ -28,11 +28,12 @@ function useMazeTimer(challengeId, active) {
 }
 
 // ── XP available display for maze challenges ───────────────────────────────────
-function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds, compact = false }) {
+function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds, hintsUsed = 0, compact = false }) {
   const limitMins = (timeLimitSeconds || 600) / 60;
   const xpPerMin = xpReward / limitMins;
   const elapsedMins = Math.floor(elapsedSeconds / 60);
-  const xpNow = Math.max(0, Math.floor(xpReward - elapsedMins * xpPerMin));
+  const timeXp = Math.max(0, Math.floor(xpReward - elapsedMins * xpPerMin));
+  const xpNow = Math.max(0, Math.floor(timeXp * Math.max(0, 1 - 0.25 * hintsUsed)));
   const pct = xpNow / xpReward;
   const mins = Math.floor(elapsedSeconds / 60);
   const secs = elapsedSeconds % 60;
@@ -48,6 +49,7 @@ function MazeXpDisplay({ xpReward, timeLimitSeconds, elapsedSeconds, compact = f
         <span>{xpNow} XP</span>
         <span className="opacity-60">·</span>
         <span>{timeStr}</span>
+        {hintsUsed > 0 && <><span className="opacity-60">·</span><span className="opacity-80">hint×{hintsUsed}</span></>}
       </div>
     );
   }
@@ -488,6 +490,8 @@ export default function Challenge() {
   const [showModal, setShowModal] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const autoSubmitRef = useRef(false);
+  const hintsUsedRef = useRef(0);
+  const [mazeHintsUsed, setMazeHintsUsed] = useState(0);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['challenge', challengeId || 'current'],
@@ -509,6 +513,11 @@ export default function Challenge() {
     if (qt === 'ordering' && Array.isArray(challenge.answer_options) && challenge.answer_options.length > 0) {
       setAnswer(challenge.answer_options.join('|||'));
     }
+  }, [challenge?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    hintsUsedRef.current = 0;
+    setMazeHintsUsed(0);
   }, [challenge?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const submitMutation = useMutation({
@@ -558,24 +567,31 @@ export default function Challenge() {
     const limitMins = (challenge.time_limit_seconds || 600) / 60;
     const xpPerMin = challenge.xp_reward / limitMins;
     const elapsedMins = Math.floor(mazeElapsed / 60);
-    return Math.max(0, Math.floor(challenge.xp_reward - elapsedMins * xpPerMin));
+    const timeXp = Math.max(0, Math.floor(challenge.xp_reward - elapsedMins * xpPerMin));
+    return Math.max(0, Math.floor(timeXp * Math.max(0, 1 - 0.25 * mazeHintsUsed)));
   }
 
   // Store elapsed in ref so postMessage handler always gets fresh value
   const mazeElapsedRef = useRef(0);
   useEffect(() => { mazeElapsedRef.current = mazeElapsed; }, [mazeElapsed]);
 
-  // Listen for MAZE_COMPLETE postMessage from the game iframe
+  // Listen for MAZE_COMPLETE and HINT_USED postMessages from the game
   useEffect(() => {
     if (!challenge || challenge.challenge_type !== 'midweek_maze' || submission) return;
     function handleMsg(event) {
+      if (event.data?.type === 'HINT_USED') {
+        hintsUsedRef.current += 1;
+        setMazeHintsUsed(h => h + 1);
+        return;
+      }
       if (event.data?.type !== 'MAZE_COMPLETE') return;
-      if (autoSubmitRef.current || submission) return;
+      if (autoSubmitRef.current) return;
       autoSubmitRef.current = true;
       const limitMins = (challenge.time_limit_seconds || 600) / 60;
       const xpPerMin = challenge.xp_reward / limitMins;
       const elapsedMins = Math.floor(mazeElapsedRef.current / 60);
-      const xpEarned = Math.max(0, Math.floor(challenge.xp_reward - elapsedMins * xpPerMin));
+      const timeXp = Math.max(0, Math.floor(challenge.xp_reward - elapsedMins * xpPerMin));
+      const xpEarned = Math.max(0, Math.floor(timeXp * Math.max(0, 1 - 0.25 * hintsUsedRef.current)));
       submitMutation.mutate({
         challenge_id: challenge.id,
         answer: challenge.game_slug || 'completed',
@@ -704,6 +720,7 @@ export default function Challenge() {
                         xpReward={challenge.xp_reward}
                         timeLimitSeconds={challenge.time_limit_seconds}
                         elapsedSeconds={mazeElapsed}
+                        hintsUsed={mazeHintsUsed}
                         compact
                       />
                     </div>

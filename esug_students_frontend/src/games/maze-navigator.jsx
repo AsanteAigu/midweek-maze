@@ -203,6 +203,7 @@ export default function MazeNavigator() {
   }, [phase, curPos, handleCell]);
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const next = bfsStep(maze.grid, curPos, visited, maze.end);
     if (!next) { setMsg('No path forward — you may be stuck'); setMsgErr(true); return; }
     setHint(next);

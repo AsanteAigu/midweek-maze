@@ -151,6 +151,7 @@ export default function TowerOfHanoi() {
   }, [pegs, selected, moves, phase]);
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const nextMove = OPTIMAL_PATH[moves];
     if (!nextMove) { showMsg('You\'re already at or past the optimal solution!', 'info'); return; }
     setHints(h => h + 1);

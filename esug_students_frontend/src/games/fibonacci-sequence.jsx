@@ -105,6 +105,7 @@ export default function FibonacciSequence() {
   }
 
   function hint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const bi = puzzle.blanks.find(i => inputs[i] !== String(puzzle.answers[puzzle.blanks.indexOf(i)]));
     if (bi === undefined) return;
     const ai = puzzle.blanks.indexOf(bi);

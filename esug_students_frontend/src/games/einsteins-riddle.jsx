@@ -91,6 +91,7 @@ export default function EinsteinsRiddle() {
   }
 
   function hint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const empties = [];
     grid.forEach((row, h) => row.forEach((val, a) => { if (val !== SOLUTION[h][a]) empties.push([h, a]); }));
     if (empties.length === 0) return;

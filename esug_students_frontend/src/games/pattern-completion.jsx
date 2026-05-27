@@ -249,7 +249,7 @@ export default function PatternCompletion() {
               </div>
               <AnimatePresence>{msg&&<motion.div initial={{opacity:0,y:-6}} animate={{opacity:1,y:0}} exit={{opacity:0}} className="bg-surface-card rounded-2xl border border-surface-border px-4 py-2.5 mb-4 text-center font-body text-sm text-text-mid">{msg}</motion.div>}</AnimatePresence>
               <div className="flex gap-3 mb-3">
-                <button onClick={()=>{setHint(true);setMsg(`Hint: ${puzzle.rule}`);}} disabled={hint}
+                <button onClick={()=>{ window.parent.postMessage({ type: 'HINT_USED' }, '*'); setHint(true);setMsg(`Hint: ${puzzle.rule}`);}} disabled={hint}
                   className="flex-1 py-3 rounded-2xl font-display font-bold text-sm bg-white border-2 border-surface-border text-text-mid hover:border-duo-blue hover:text-duo-blue transition-all disabled:opacity-40">
                   Hint <span className="font-normal text-text-muted"></span>
                 </button>

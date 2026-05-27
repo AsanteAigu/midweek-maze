@@ -153,6 +153,7 @@ export default function EquationBuilder() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     // Reveal one correct placement
     const emptySlot = slots.findIndex(v => v === null);
     if (emptySlot === -1) return;

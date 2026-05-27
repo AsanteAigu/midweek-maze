@@ -113,6 +113,7 @@ export default function PrimeFactorization() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const p = getHintPrime(selected, round.solution);
     if (!p) return;
     setHints(h => h + 1);

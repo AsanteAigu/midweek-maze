@@ -193,6 +193,7 @@ export default function RiverCrossing() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const hints_map = {
       0: [`Take ${puzzle.entities[0].label} across first`],
       1: [`Return alone`],

@@ -135,6 +135,7 @@ export default function BridgesAndIslands() {
   }
 
   function hint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     const missing = [...p.solution].find(k => !bridges.has(k));
     if (!missing) return;
     setBridges(bs => new Set([...bs, missing]));

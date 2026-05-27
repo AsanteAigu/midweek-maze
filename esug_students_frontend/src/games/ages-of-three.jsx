@@ -228,6 +228,7 @@ export default function AgesOfThree() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     setHint(true);
     setMsg(`Hint: the three ages multiply to ${puzzle.product}. List all factor triples, then use the sum clue to narrow down.`);
   }

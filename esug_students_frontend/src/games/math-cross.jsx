@@ -201,6 +201,7 @@ export default function MathCross() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     if (hints >= MAX_HINTS) { setMsg('No more hints available.'); return; }
     const empty = grid.findIndex((v, i) => v === null && !puzzle.clues.includes(i));
     if (empty === -1) return;

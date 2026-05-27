@@ -214,6 +214,7 @@ export default function LogicGates() {
   }
 
   function giveHint() {
+    window.parent.postMessage({ type: 'HINT_USED' }, '*');
     if (validCombos.length === 0) return;
     const combo = validCombos[0];
     setInputs(combo);
