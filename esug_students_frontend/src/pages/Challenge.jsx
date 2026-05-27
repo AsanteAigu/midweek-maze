@@ -738,30 +738,7 @@ export default function Challenge() {
                   <h2 className="font-display font-black text-xl text-text-dark mb-2">Time's Up!</h2>
                   <p className="font-body text-text-mid text-sm">Your time limit expired. {submitMutation.isPending ? 'Submitting your last answer...' : 'No answer was submitted.'}</p>
                 </motion.div>
-              ) : challenge.challenge_type === 'midweek_maze' ? (
-                // ── Midweek Maze completion button ─────────────────────────
-                <div className="card">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Icon.Check className="w-5 h-5 text-duo-blue" />
-                    <h2 className="font-display font-black text-lg text-text-dark">Complete the Challenge</h2>
-                  </div>
-                  <p className="font-body text-text-mid text-sm mb-4">
-                    Play the game above, then click the button below to claim your XP!
-                  </p>
-                  <div className="flex items-center gap-1 text-xs text-text-muted mb-4">
-                    <Icon.Warning className="w-3.5 h-3.5" />
-                    One submission only — mark complete only when you're done
-                  </div>
-                  <button
-                    onClick={() => setShowModal(true)}
-                    disabled={submitMutation.isPending}
-                    className="btn-primary w-full py-3 text-base flex items-center justify-center gap-2 disabled:opacity-60"
-                  >
-                    <Icon.Check className="w-5 h-5" />
-                    Mark as Completed
-                  </button>
-                </div>
-              ) : (
+              ) : challenge.challenge_type === 'midweek_maze' ? null : (
                 // ── Single-question form (all 8 types) ─────────────────────
                 <form onSubmit={handleSubmitAttempt} className="card">
                   <div className="flex items-center gap-2 mb-4">
