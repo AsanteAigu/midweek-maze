@@ -97,7 +97,7 @@ export default function MiniSudoku() {
   const [grid,     setGrid]    = useState(() => buildGrid(0));
   const [selCell,  setSelCell] = useState(null); // [r,c] or null
   const [triesLeft,setTries]   = useState(MAX_TRIES);
-  const [setScore]   = useState(0);
+  const [score, setScore] = useState(0);
   const [hints,    setHints]   = useState(0);
   const [phase,    setPhase]   = useState('intro');
   const [msg,      setMsg]     = useState('');

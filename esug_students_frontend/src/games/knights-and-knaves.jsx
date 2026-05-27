@@ -148,7 +148,7 @@ export default function KnightsAndKnaves() {
   const [pIdx,     setPIdx]    = useState(0);
   const [assigns,  setAssigns] = useState({ A: null, B: null, C: null });
   const [triesLeft,setTries]   = useState(MAX_TRIES);
-  const [setScore]   = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,    setPhase]   = useState('intro');
   const [feedback, setFB]      = useState({});
   const [msg,      setMsg]     = useState('');

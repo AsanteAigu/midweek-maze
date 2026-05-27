@@ -164,7 +164,7 @@ export default function AnagramSolver() {
   const [setIdx,  setSetIdx]  = useState(0);
   const [chosen,  setChosen]  = useState([]);
   const [found,   setFound]   = useState([]);
-  const [setScore]   = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,   setPhase]   = useState('intro');
   const [msg,     setMsg]     = useState('');
   const [msgOk,   setMsgOk]   = useState(false);

@@ -46,7 +46,7 @@ export default function StarPlacement() {
   const [pIdx, setPIdx] = useState(0);
   const [stars, setStars] = useState(new Set());
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
   const [errors, setErrors] = useState(new Set()); // num cells that are wrong

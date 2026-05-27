@@ -58,7 +58,7 @@ export default function FractionSimplification() {
   const [numInput,  setNumIn]  = useState('');
   const [denInput,  setDenIn]  = useState('');
   const [triesLeft, setTries]  = useState(MAX_TRIES);
-  const [setScore]  = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,     setPhase]  = useState('intro');
   const [feedback,  setFB]     = useState(null); // null|'correct'|'wrong'|'notsimplified'
   const [msg,       setMsg]    = useState('');

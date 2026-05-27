@@ -27,7 +27,7 @@ export default function PangramBuilder() {
   const [round, setRound] = useState(0);
   const [text, setText] = useState('');
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('playing');
   const [msg, setMsg] = useState('');
   const [hintShown, setHintShown] = useState(false);

@@ -126,7 +126,7 @@ export default function MathCross() {
   const [grid,     setGrid]    = useState(() => initGrid(0));
   const [selBank,  setSelBank] = useState(null);
   const [tries,    setTries]   = useState(MAX_TRIES);
-  const [setScore]   = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,    setPhase]   = useState('intro');
   const [msg,      setMsg]     = useState('');
   const [hints,    setHints]   = useState(0);

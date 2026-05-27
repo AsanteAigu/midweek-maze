@@ -129,7 +129,7 @@ export default function RiverCrossing() {
   const [phase,  setPhase]  = useState('intro'); // select|crossing|won|failed
   const [moves,  setMoves]  = useState(0);
   const [triesLeft,setTries]= useState(MAX_TRIES);
-  const [setScore]  = useState(0);
+  const [score, setScore] = useState(0);
   const [msg,    setMsg]    = useState('');
   const [hints,  setHints]  = useState(0);
 

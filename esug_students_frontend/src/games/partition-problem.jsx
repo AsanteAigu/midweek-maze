@@ -47,7 +47,7 @@ export default function PartitionProblem() {
   const [pIdx, setPIdx] = useState(0);
   const [subsetA, setSubsetA] = useState(new Set()); // indices in subsetA
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
 

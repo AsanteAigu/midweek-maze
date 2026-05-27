@@ -63,7 +63,7 @@ export default function RotationalSymmetry() {
   const [sel,setSel]=useState(null);
   const [hovering,setHovering]=useState(null); // option index being hovered
   const [tries,setTries]=useState(MAX_TRIES);
-  const [setScore]=useState(0);
+  const [score, setScore] = useState(0);
   const [phase,setPhase]=useState('intro');
   const [fb,setFb]=useState(null);
   const [msg,setMsg]=useState('');

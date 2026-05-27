@@ -115,7 +115,7 @@ export default function PatternCompletion() {
   const [pIdx,setPIdx]=useState(0);
   const [sel,setSel]=useState(null);
   const [tries,setTries]=useState(MAX_TRIES);
-  const [setScore]=useState(0);
+  const [score, setScore] = useState(0);
   const [phase,setPhase]=useState('intro');
   const [fb,setFb]=useState(null);
   const [msg,setMsg]=useState('');

@@ -96,7 +96,7 @@ export default function InfiniteSeries() {
   const [num, setNum] = useState('');
   const [den, setDen] = useState('');
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [fb, setFb] = useState(null);
   const [msg, setMsg] = useState('');

@@ -56,7 +56,7 @@ export default function SatProblem() {
   const [fIdx, setFIdx] = useState(0);
   const [vals, setVals] = useState({});
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
   const [submitted, setSubmitted] = useState(false);

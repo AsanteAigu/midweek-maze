@@ -47,7 +47,7 @@ export default function RecursiveSequence() {
   const [sIdx, setSIdx] = useState(0);
   const [inputs, setInputs] = useState(['', '', '']);
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [fb, setFb] = useState(null); // null | [bool,bool,bool]
   const [msg, setMsg] = useState('');

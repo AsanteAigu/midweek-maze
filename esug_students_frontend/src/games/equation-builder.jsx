@@ -79,7 +79,7 @@ export default function EquationBuilder() {
   const [slots,    setSlots]    = useState(Array(6).fill(null));
   const [pickedTile, setPicked] = useState(null);   // index into shuffledPool
   const [triesLeft, setTries]   = useState(MAX_TRIES);
-  const [setScore]    = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,    setPhase]    = useState('intro');
   const [status,   setStatus]   = useState(Array(6).fill(null)); // correct|wrong|null
   const [msg,      setMsg]      = useState('');

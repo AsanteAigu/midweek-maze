@@ -52,7 +52,7 @@ const emptyGrid = () => SOLUTION.map(row => row.map(cell => (cell===null ? null 
 export default function MiniCrossword() {
   const [grid, setGrid] = useState(emptyGrid);
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
   const [wrongCells, setWrongCells] = useState(new Set());

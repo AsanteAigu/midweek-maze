@@ -62,7 +62,7 @@ export default function ModularArithmetic() {
   const [pIdx, setPIdx] = useState(0);
   const [input, setInput] = useState('');
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [fb, setFb] = useState(null); // null | 'correct' | 'wrong'
   const [msg, setMsg] = useState('');

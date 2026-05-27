@@ -76,7 +76,7 @@ export default function BridgesAndIslands() {
   const [bridges, setBridges] = useState(new Set()); // set of "A-B" keys (single bridge)
   const [pending, setPending] = useState(null);       // first island selected
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
   const [wrongBridges, setWrongBridges] = useState(new Set());

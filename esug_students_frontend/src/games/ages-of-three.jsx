@@ -164,7 +164,7 @@ export default function AgesOfThree() {
   const [pIdx,      setPIdx]  = useState(0);
   const [inputs,    setInputs]= useState(['', '', '']);
   const [triesLeft, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,     setPhase] = useState('intro');
   const [msg,       setMsg]   = useState('');
   const [hintShown, setHint]  = useState(false);

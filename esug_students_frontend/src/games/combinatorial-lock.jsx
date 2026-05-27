@@ -36,7 +36,7 @@ export default function CombinatorialLock() {
   const [guesses, setGuesses] = useState([]);
   const [current, setCurrent] = useState(Array(CODE_LEN).fill(''));
   const [phase, setPhase] = useState('intro'); // playing | won | lost | roundWon
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [msg, setMsg] = useState('');
 
   const currentCode = code[round - 1];

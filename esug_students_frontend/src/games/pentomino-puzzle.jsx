@@ -130,7 +130,7 @@ export default function PentominoPuzzle() {
   const [grid, setGrid] = useState(() => Array(GRID_ROWS).fill(null).map(() => Array(GRID_COLS).fill(null)));
   const [activeColor, setActiveColor] = useState(null);
   const [tries, setTries] = useState(MAX_TRIES);
-  const [setScore] = useState(0);
+  const [score, setScore] = useState(0);
   const [phase, setPhase] = useState('intro');
   const [msg, setMsg] = useState('');
   const [wrongCells, setWrongCells] = useState(new Set());

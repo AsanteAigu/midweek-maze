@@ -60,7 +60,7 @@ export default function PrimeFactorization() {
   const [roundIdx, setRoundIdx] = useState(0);
   const [selected, setSelected] = useState([]); // array of primes chosen so far
   const [triesLeft,setTries]    = useState(MAX_TRIES);
-  const [setScore]    = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,    setPhase]    = useState('intro');
   const [msg,      setMsg]      = useState('');
   const [msgOk,    setMsgOk]    = useState(false);

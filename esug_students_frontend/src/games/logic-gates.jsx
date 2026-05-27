@@ -151,7 +151,7 @@ export default function LogicGates() {
   const [roundIdx, setRound]   = useState(0);
   const [inputs,   setInputs]  = useState({ A: false, B: false, C: false });
   const [triesLeft,setTries]   = useState(MAX_TRIES);
-  const [setScore]   = useState(0);
+  const [score, setScore] = useState(0);
   const [phase,    setPhase]   = useState('intro');
   const [feedback, setFB]      = useState(null); // null|'correct'|'wrong'
   const [msg,      setMsg]     = useState('');
