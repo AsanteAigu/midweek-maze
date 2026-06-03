@@ -12,17 +12,56 @@ import apiClient from '../utils/axiosClient';
 import GameRenderer from '../games/GameRenderer';
 
 
-// ── Maze elapsed timer (counts up from when student opens the challenge) ──────
+// ── Maze elapsed timer — pauses while tab is hidden or page is left ───────────
 function useMazeTimer(challengeId, active) {
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (!challengeId || !active) return;
-    const key = `maze_start_${challengeId}`;
-    if (!localStorage.getItem(key)) localStorage.setItem(key, String(Date.now()));
-    function calc() { return Math.floor((Date.now() - parseInt(localStorage.getItem(key) || '0', 10)) / 1000); }
+    const startKey = `maze_start_${challengeId}`;
+    const hiddenKey = `maze_hidden_${challengeId}`;
+
+    if (!localStorage.getItem(startKey)) localStorage.setItem(startKey, String(Date.now()));
+
+    // On mount: if we left while the tab was visible (SPA nav or browser close),
+    // a hiddenAt was saved in cleanup — apply the accumulated pause now.
+    const savedHidden = parseInt(localStorage.getItem(hiddenKey) || '0', 10);
+    if (savedHidden) {
+      const pausedMs = Date.now() - savedHidden;
+      const start = parseInt(localStorage.getItem(startKey) || '0', 10);
+      localStorage.setItem(startKey, String(start + pausedMs));
+      localStorage.removeItem(hiddenKey);
+    }
+
+    function getStart() { return parseInt(localStorage.getItem(startKey) || '0', 10); }
+    function calc() { return Math.floor((Date.now() - getStart()) / 1000); }
+
     setElapsed(calc());
     const id = setInterval(() => setElapsed(calc()), 1000);
-    return () => clearInterval(id);
+
+    function handleVisibility() {
+      if (document.visibilityState === 'hidden') {
+        localStorage.setItem(hiddenKey, String(Date.now()));
+      } else {
+        const hiddenAt = parseInt(localStorage.getItem(hiddenKey) || '0', 10);
+        if (hiddenAt) {
+          const pausedMs = Date.now() - hiddenAt;
+          localStorage.setItem(startKey, String(getStart() + pausedMs));
+          localStorage.removeItem(hiddenKey);
+        }
+        setElapsed(calc());
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      // Save pause start when navigating away (only if tab is currently visible)
+      if (document.visibilityState !== 'hidden') {
+        localStorage.setItem(hiddenKey, String(Date.now()));
+      }
+    };
   }, [challengeId, active]);
   return elapsed;
 }
