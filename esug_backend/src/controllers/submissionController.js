@@ -105,13 +105,14 @@ async function submit(req, res) {
       });
     }
 
-    // ── 5a. Midweek Maze — store XP now, credit Wednesday like all challenges ─
+    // ── 5a. Midweek Maze — score and credit XP immediately on completion ──────
     if (challenge.challenge_type === 'midweek_maze') {
       // Clamp client-sent XP to [0, xp_reward]
       const earnedXp = Math.min(
         challenge.xp_reward || 0,
         Math.max(0, parseInt(clientXpEarned) || 0),
       );
+      const isCorrect = earnedXp > 0;
 
       const { data: submission, error: insertError } = await supabase
         .from('submissions')
@@ -119,8 +120,8 @@ async function submit(req, res) {
           student_id: studentId,
           challenge_id,
           answer: answerToStore,
-          is_correct: null,    // pending — scheduler credits XP on Wednesday
-          xp_earned: earnedXp, // pre-calculated time-based XP stored for scheduler
+          is_correct: isCorrect,
+          xp_earned: earnedXp,
         })
         .select()
         .single();
@@ -132,10 +133,39 @@ async function submit(req, res) {
         throw insertError;
       }
 
+      // Award XP immediately
+      if (earnedXp > 0) {
+        await supabase.from('xp_history').insert({
+          student_id: studentId,
+          challenge_id,
+          xp_earned: earnedXp,
+          reason: `Midweek Maze completed — ${challenge.title}`,
+        });
+
+        const { error: rpcError } = await supabase.rpc('increment_xp', {
+          student_uuid: studentId,
+          xp_amount: earnedXp,
+        });
+
+        if (rpcError) {
+          const { data: student } = await supabase
+            .from('students')
+            .select('total_xp')
+            .eq('id', studentId)
+            .single();
+          if (student) {
+            await supabase
+              .from('students')
+              .update({ total_xp: (student.total_xp || 0) + earnedXp })
+              .eq('id', studentId);
+          }
+        }
+      }
+
       return res.status(201).json({
         success: true,
-        message: 'Game completed! Results drop Wednesday at midnight.',
-        submission: { id: submission.id, submitted_at: submission.submitted_at, is_correct: null, xp_earned: earnedXp },
+        message: earnedXp > 0 ? `Game complete! +${earnedXp} XP added to your total.` : 'Game complete! No XP — time ran out.',
+        submission: { id: submission.id, submitted_at: submission.submitted_at, is_correct: isCorrect, xp_earned: earnedXp },
       });
     }
 

@@ -414,8 +414,8 @@ function formatAnswerLabel(answerStr, challenge) {
 // ── XP celebration card shown right after submit ───────────────────────────────
 function SubmittedCard({ submission, challenge }) {
   const isMaze = challenge?.challenge_type === 'midweek_maze';
-  const pending = isMaze || submission.is_correct === null;
-  const correct = !isMaze && submission.is_correct === true;
+  const pending = !isMaze && submission.is_correct === null;
+  const correct = isMaze ? submission.xp_earned > 0 : submission.is_correct === true;
 
   return (
     <motion.div {...scaleIn} className="card text-center py-10">
@@ -438,7 +438,7 @@ function SubmittedCard({ submission, challenge }) {
 
       {/* Headline */}
       <h2 className="font-display font-black text-2xl text-text-dark mb-1">
-        {pending ? 'Answer locked in!' : correct ? 'Correct answer!' : 'Not quite this time'}
+        {pending ? 'Answer locked in!' : correct ? (isMaze ? 'Game Complete!' : 'Correct answer!') : (isMaze ? 'Time ran out!' : 'Not quite this time')}
       </h2>
 
       {/* XP line */}
@@ -458,7 +458,7 @@ function SubmittedCard({ submission, challenge }) {
           </div>
         </div>
       ) : (
-        <p className="font-body text-text-mid text-sm mb-4">Keep going — next challenge drops Wednesday</p>
+        <p className="font-body text-text-mid text-sm mb-4">{isMaze ? 'XP is 0 — time ran out before you finished.' : 'Keep going — next challenge drops Wednesday'}</p>
       )}
 
       {/* Subtext */}
@@ -467,7 +467,7 @@ function SubmittedCard({ submission, challenge }) {
           ? 'Marking happens Wednesday at midnight when the window closes.'
           : correct
           ? 'Your XP has been added to your total. Check the leaderboard!'
-          : 'Partial XP may still be awarded. Check back Wednesday.'}
+          : isMaze ? 'Try again next week — a new game drops every Wednesday.' : 'Partial XP may still be awarded. Check back Wednesday.'}
       </p>
 
       {/* Answer bubble */}
