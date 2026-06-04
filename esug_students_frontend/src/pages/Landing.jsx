@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +28,20 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-surface-off">
+      <Helmet>
+        <title>Midweek Maze — Weekly Engineering Challenges for ESUG Students</title>
+        <meta name="description" content="Solve weekly puzzles, earn XP, and climb the leaderboard. Midweek Maze is the engineering challenge platform for ESUG students. New challenge every Wednesday." />
+        <link rel="canonical" href="https://midweek-maze-student.pages.dev/" />
+        <meta property="og:title" content="Midweek Maze — Weekly Engineering Challenges" />
+        <meta property="og:description" content="Solve weekly puzzles, earn XP, and climb the leaderboard. New challenge every Wednesday." />
+        <meta property="og:url" content="https://midweek-maze-student.pages.dev/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://midweek-maze-student.pages.dev/pwa-512.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Midweek Maze — Weekly Engineering Challenges" />
+        <meta name="twitter:description" content="Solve weekly puzzles, earn XP, and climb the leaderboard. New challenge every Wednesday." />
+        <meta name="twitter:image" content="https://midweek-maze-student.pages.dev/pwa-512.png" />
+      </Helmet>
       <Navbar />
 
       <motion.div {...pageTransition}>

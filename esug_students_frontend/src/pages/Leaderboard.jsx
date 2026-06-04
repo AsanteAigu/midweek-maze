@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -75,6 +76,15 @@ export default function Leaderboard() {
 
   return (
     <div className="min-h-screen bg-surface-off">
+      <Helmet>
+        <title>Leaderboard — Midweek Maze</title>
+        <meta name="description" content="See who's topping the ESUG Midweek Maze leaderboard. Weekly and all-time XP rankings for engineering students." />
+        <link rel="canonical" href="https://midweek-maze-student.pages.dev/leaderboard" />
+        <meta property="og:title" content="Leaderboard — Midweek Maze" />
+        <meta property="og:description" content="Weekly and all-time XP rankings for ESUG engineering students." />
+        <meta property="og:url" content="https://midweek-maze-student.pages.dev/leaderboard" />
+        <meta property="og:image" content="https://midweek-maze-student.pages.dev/pwa-512.png" />
+      </Helmet>
       <Navbar />
       <motion.div {...pageTransition} className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}

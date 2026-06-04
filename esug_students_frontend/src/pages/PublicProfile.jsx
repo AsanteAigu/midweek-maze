@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -21,8 +22,23 @@ export default function PublicProfile() {
   const profile = data?.profile;
   const history = data?.history || [];
 
+  const profileName = profile?.display_name || displayName;
+  const profileXp   = profile?.total_xp ?? 0;
+  const profileDesc = profile
+    ? `${profileName} has earned ${profileXp} XP on Midweek Maze. ${profile.course ? COURSE_LABELS[profile.course] + ' · ' : ''}Level ${profile.level || ''}.`
+    : `View ${displayName}'s profile on Midweek Maze.`;
+
   return (
     <div className="min-h-screen bg-surface-off">
+      <Helmet>
+        <title>{profileName} — Midweek Maze</title>
+        <meta name="description" content={profileDesc} />
+        <link rel="canonical" href={`https://midweek-maze-student.pages.dev/profile/${encodeURIComponent(displayName)}`} />
+        <meta property="og:title" content={`${profileName} — Midweek Maze`} />
+        <meta property="og:description" content={profileDesc} />
+        <meta property="og:url" content={`https://midweek-maze-student.pages.dev/profile/${encodeURIComponent(displayName)}`} />
+        <meta property="og:image" content="https://midweek-maze-student.pages.dev/pwa-512.png" />
+      </Helmet>
       <Navbar />
       <motion.div {...pageTransition} className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {isLoading && (

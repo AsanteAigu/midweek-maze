@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /leaderboard
+Allow: /profile/
+Disallow: /dashboard
+Disallow: /challenge
+Disallow: /profile$
+Disallow: /register
+Disallow: /login
+Disallow: /update-password
+
+Sitemap: https://midweek-maze-student.pages.dev/sitemap.xml
