@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'Midweek Maze',
         short_name: 'Midweek Maze',
         description: 'Weekly engineering challenges for ESUG students. Every Wednesday. Every week.',
-        theme_color: '#58CC02',
+        theme_color: '#1CB0F6',
         background_color: '#F7F7F7',
         display: 'standalone',
         orientation: 'portrait',
